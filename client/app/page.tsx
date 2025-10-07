@@ -1,14 +1,11 @@
-'use client'
-export default function Home() {
-
- const  handleOnClick = () => {
-    fetch(process.env.BACKEND_SERVER_URL+"/test")
-      .then((response) => response.json())
-      .then((data) => console.log(data));
-  }
+import { api } from "./api";
+import HomePage from "./landing/home";
+export default async function Home() {
+  const data1 = await api("/test");
+  const data2 = await api("/test2");
   return (
-    <div className="flex justify-center items-center h-screen bg-black" onClick={handleOnClick}>
-      TEST
+    <div className="grid grid-cols-4 justify-center items-center h-screen bg-white text-black">
+      <HomePage testData={data1} test2Data={data2} />
     </div>
   );
 }
