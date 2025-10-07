@@ -1,0 +1,5 @@
+fastApi;
+pydantic;
+starlette;
+typing-extensions;
+uvicorn;
