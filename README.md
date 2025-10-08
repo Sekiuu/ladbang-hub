@@ -17,7 +17,7 @@ To Run Web-app correctly you have to run both "server" and "client"
 \*\* To run client, run this command in terminal
 
 - cd client
-- npm i
+- npm i -> in case someone is install more pakages
 - npm run dev
 
 \*\* To run server, run this command in terminal
