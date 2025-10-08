@@ -3,6 +3,7 @@ import React from "react";
 import type { ResponseData } from "../api";
 import ButtonUI from "../compoents/ui/Button";
 import { useState } from "react";
+import { api } from "../api";
 export default function HomePage({
   testData,
   test2Data,
@@ -12,6 +13,23 @@ export default function HomePage({
 }) {
   const [response, setResponseData] = useState<ResponseData | null>(null);
   const [body, setBody] = useState<string>("");
+
+  const [itemValue, setItemValue] = useState<string>("");
+
+  const handleTestPostAPI = async () => {
+    const res = await api.post("/item", { item: itemValue });
+    setResponseData(res);
+    console.log(res);
+    setBody(JSON.stringify(res?.body));
+  };
+
+  const handleTestGetAPI = async () => {
+    const res = await api.get("/item");
+    setResponseData(res);
+    console.log(res);
+    setBody(JSON.stringify(res?.body));
+  };
+
   const handleTestAPI = (num: number) => {
     if (num == 0) {
       setResponseData(testData);
@@ -46,6 +64,30 @@ export default function HomePage({
         className="min-w-lg"
       >
         Test API 2
+      </ButtonUI>
+      <textarea
+        className="bg-white rounded-xl p-5 min-w-md min-h-20"
+        value={itemValue}
+        onChange={(e) => setItemValue(e.target.value)}
+        placeholder="Enter item value"
+        title="Item Value"
+      />
+      <ButtonUI
+        onClick={() => {
+          handleTestPostAPI();
+          setItemValue(""); //set empty field
+        }}
+        className="min-w-lg"
+      >
+        Test Post Add Item
+      </ButtonUI>
+      <ButtonUI
+        onClick={() => {
+          handleTestGetAPI();
+        }}
+        className="min-w-lg"
+      >
+        Test Get Item
       </ButtonUI>
     </div>
   );

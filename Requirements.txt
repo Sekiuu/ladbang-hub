@@ -3,3 +3,4 @@ pydantic;
 starlette;
 typing-extensions;
 uvicorn;
+dotenv;
