@@ -32,6 +32,18 @@ def get_test2():
     # print("test")
     return {"body": {"name":"myname is test2"}, "message": "this is a test! but two", "success": True}
 
+@app.get('/test3')
+def get_test3():
+    """
+    This is a test endpoint. It returns a JSON object with a body property.
+    return as type ResponseData
+    body: JSON
+    message: str
+    success: bool
+    """
+    # print("test")
+    return {"body": {"name":"myname is test3"}, "message": "this is a test! but three i naa hee", "success": True}
+
 @app.post('/item')
 def create_item(item: dict):
     """

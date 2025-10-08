@@ -6,9 +6,11 @@ import { useState } from "react";
 export default function HomePage({
   testData,
   test2Data,
+  test3Data,
 }: {
   testData: ResponseData | null;
   test2Data: ResponseData | null;
+  test3Data: ResponseData | null;
 }) {
   const [response, setResponseData] = useState<ResponseData | null>(null);
   const [body, setBody] = useState<string>("");
@@ -17,10 +19,16 @@ export default function HomePage({
       setResponseData(testData);
       console.log(testData);
       setBody(JSON.stringify(testData?.body));
-    } else {
+    } 
+    else if (num == 1) {
       setResponseData(test2Data);
       console.log(test2Data);
       setBody(JSON.stringify(test2Data?.body));
+    }
+    else {
+      setResponseData(test3Data);
+      console.log(test3Data);
+      setBody(JSON.stringify(test3Data?.body));
     }
   };
 
@@ -46,6 +54,14 @@ export default function HomePage({
         className="min-w-lg"
       >
         Test API 2
+      </ButtonUI>
+      <ButtonUI
+        onClick={() => {
+          handleTestAPI(2);
+        }}
+        className="min-w-lg"
+      >
+        Test API 3
       </ButtonUI>
     </div>
   );
