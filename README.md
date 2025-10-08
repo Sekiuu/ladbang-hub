@@ -3,7 +3,7 @@ Hello it's my PSCP project
 Before start project make sure your create .venv in this directory
 
 - to create .venv you can run this command in terminal : python -m venv .venv
-- affter created .venv you must create file .gitignore -> .venv/.gitignore
+- after created .venv you must create file .gitignore -> .venv/.gitignore
 
 ** To install python pakages you have to run .venv first 
 -> create python file and run it, this will activate .venv automaticly or run command : activate .venv
