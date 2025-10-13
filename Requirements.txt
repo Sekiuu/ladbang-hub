@@ -4,3 +4,4 @@ starlette;
 typing-extensions;
 uvicorn;
 dotenv;
+google-genai;
