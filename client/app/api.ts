@@ -6,7 +6,7 @@ export type ResponseData = {
   success: boolean;
 };
 
-const backendUrl = process.env.BACKEND_URL || "http://localhost:8080";
+const backendUrl = process.env.BACKEND_URL || "http://localhost:8000";
 // Simple, typed GET helper with optional query params
 export async function apiGet(
   path: string,
