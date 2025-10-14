@@ -1,9 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import type { ResponseData } from "../api";
 import ButtonUI from "../compoents/ui/Button";
-import { useState } from "react";
 import { api } from "../api";
 
 export default function HomePage({
@@ -16,36 +15,44 @@ export default function HomePage({
   const [response, setResponseData] = useState<ResponseData | null>(null);
   const [body, setBody] = useState<string>("");
   const [itemValue, setItemValue] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleTestPostAPI = async () => {
+    if (!itemValue) return setBody("Please enter a value before sending.");
+    setLoading(true);
     try {
       const res = await api.post("/item", { item: itemValue });
       setResponseData(res);
-      setBody(JSON.stringify(res?.body));
+      setBody(JSON.stringify(res?.body, null, 2));
     } catch (err) {
       setResponseData({ message: "Request failed", body: null } as any);
       setBody(String(err));
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleTestGetAPI = async () => {
+    setLoading(true);
     try {
       const res = await api.get("/item");
       setResponseData(res);
-      setBody(JSON.stringify(res?.body));
+      setBody(JSON.stringify(res?.body, null, 2));
     } catch (err) {
       setResponseData({ message: "Request failed", body: null } as any);
       setBody(String(err));
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleTestAPI = (num: number) => {
     if (num == 0) {
       setResponseData(testData);
-      setBody(JSON.stringify(testData?.body));
+      setBody(JSON.stringify(testData?.body, null, 2));
     } else {
       setResponseData(test2Data);
-      setBody(JSON.stringify(test2Data?.body));
+      setBody(JSON.stringify(test2Data?.body, null, 2));
     }
   };
 
@@ -66,16 +73,18 @@ export default function HomePage({
             <div className="mt-6 flex flex-wrap gap-3">
               <ButtonUI
                 onClick={() => handleTestAPI(0)}
+                aria-label="Use test data 1"
                 className="bg-red-600 hover:bg-red-700 text-white px-5 py-3 rounded-lg shadow"
               >
-                Use Test Data 1
+                Test Data 1
               </ButtonUI>
 
               <ButtonUI
                 onClick={() => handleTestAPI(1)}
+                aria-label="Use test data 2"
                 className="bg-white border border-red-600 text-red-600 px-5 py-3 rounded-lg hover:bg-red-50"
               >
-                Use Test Data 2
+                Test Data 2
               </ButtonUI>
             </div>
           </div>
@@ -89,7 +98,10 @@ export default function HomePage({
                 </p>
               </div>
 
-              <pre className="bg-white rounded-lg p-3 text-xs text-gray-700 overflow-auto max-h-40">
+              <pre
+                className="bg-white rounded-lg p-3 text-xs text-gray-700 overflow-auto max-h-40"
+                aria-live="polite"
+              >
                 {body || "Response body will appear here..."}
               </pre>
             </div>
@@ -106,32 +118,35 @@ export default function HomePage({
             </p>
 
             <div className="mt-4 flex flex-col gap-3">
+              <label htmlFor="itemValue" className="sr-only">
+                Item value
+              </label>
               <textarea
+                id="itemValue"
                 className="w-full min-h-[90px] p-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-200"
                 value={itemValue}
                 onChange={(e) => setItemValue(e.target.value)}
                 placeholder="Enter item value"
-                title="Item Value"
               />
 
               <div className="flex flex-wrap gap-3">
                 <ButtonUI
-                  onClick={() => {
-                    handleTestPostAPI();
+                  onClick={async () => {
+                    await handleTestPostAPI();
                     setItemValue("");
                   }}
+                  disabled={loading}
                   className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
                 >
-                  Send Item
+                  {loading ? "Sending..." : "Send Item"}
                 </ButtonUI>
 
                 <ButtonUI
-                  onClick={() => {
-                    handleTestGetAPI();
-                  }}
+                  onClick={handleTestGetAPI}
+                  disabled={loading}
                   className="bg-white border border-red-600 text-red-600 px-4 py-2 rounded-lg"
                 >
-                  Fetch Items
+                  {loading ? "Loading..." : "Fetch Items"}
                 </ButtonUI>
               </div>
             </div>
