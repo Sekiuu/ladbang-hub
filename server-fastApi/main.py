@@ -3,7 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 import uvicorn
 from pydantic import BaseModel
-
 items = []
 app = FastAPI()
 
@@ -99,17 +98,14 @@ def read_item():
         "success": True,
     }
 
-
-@app.get("/item/{item_id}")
-def read_item(item_id: int):
-    return {"id": item_id, "item_name": items[item_id]}
-
-
 if __name__ == "__main__":
     """
     This is the main entry point of the application. It starts the Uvicorn server
     on port 8000 and prints a message to the console.
     """
+    from ai import routeAi
+    routeAi()
+    
     config = uvicorn.Config(app=app, port=8080)
     server = uvicorn.Server(config)
     server.run()
