@@ -106,7 +106,8 @@ if __name__ == "__main__":
     from ai import routeAi
     routeAi()
     
-    config = uvicorn.Config(app=app, port=8080)
+    PORT = int(os.getenv("PORT", 8000))
+    config = uvicorn.Config(app=app, port=PORT)
     server = uvicorn.Server(config)
     server.run()
     # uvicorn.run(app=app, port=8000)
