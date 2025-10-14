@@ -57,7 +57,7 @@ export default function HomePage({
   };
 
   return (
-    <main className="w-full min-h-screen bg-white text-gray-900">
+    <main className="w-full bg-white text-gray-900">
       <section className="max-w-6xl mx-auto px-6 py-14">
         {/* Header / Hero */}
         <header className="flex flex-col md:flex-row items-center gap-8">
