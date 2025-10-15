@@ -1,9 +1,9 @@
 from google import genai
 from google.genai import types
 import os
-import fastapi
+from fastapi import APIRouter
 
-ai_router = fastapi.FastAPI()
+ai_router = APIRouter()
 
 from dotenv import load_dotenv
 load_dotenv()

@@ -103,8 +103,8 @@ if __name__ == "__main__":
     This is the main entry point of the application. It starts the Uvicorn server
     on port 8000 and prints a message to the console.
     """
-    from ai import routeAi
-    routeAi()
+    from ai import ai_router
+    app.include_router(ai_router, prefix="/ai", tags=["ai"])
     
     PORT = int(os.getenv("PORT", 8000))
     config = uvicorn.Config(app=app, port=PORT)
