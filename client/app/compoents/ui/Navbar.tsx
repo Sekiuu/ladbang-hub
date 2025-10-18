@@ -14,21 +14,36 @@ export default function Navbar(): React.ReactElement {
         color: "#ffffff",
       }}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          <div className="flex items-center">
+      <div className="w-full">
+        <div className="w-full flex h-16 items-center px-2 sm:px-4 lg:px-6">
+          <div className="flex-1 flex items-center">
             <Link href="/" className="text-lg font-semibold" style={{ color: "#fff" }}>
               Ladbang
             </Link>
           </div>
-        
-          <div className="flex items-center gap-3">
+
+          <div className="flex-1 flex items-center justify-end">
             <div className="hidden md:block">
-              <Link href="/login"className="text-lg font-semibold" style={{ color: "#fff" }}>
+              <Link href="/login" className="text-lg font-semibold" style={{ color: "#fff" }}>
                 Login
               </Link>
             </div>
 
+            <div className="md:hidden">
+              <button
+                onClick={() => setOpen((v) => !v)}
+                aria-label="Toggle menu"
+                className="inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-offset-2"
+              >
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  {open ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>
