@@ -5,3 +5,6 @@ typing-extensions;
 uvicorn;
 dotenv;
 google-genai;
+asyncpg;
+tortoise-orm;
+postgressql;

@@ -24,3 +24,7 @@ To Run Web-app correctly you have to run both "server" and "client"
 
 - cd server-fastApi
 - uvicorn main:app --reload
+
+    To connect database add DB_URL in .env file
+    ** be carefull we got "devlopment" branch and "public" branch
+    - for devlopmemnt use "devlopment"

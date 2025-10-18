@@ -3,6 +3,8 @@ import HomePage from "./landing/home";
 export default async function Home() {
   const data1 = await api.get("/test");
   const data2 = await api.get("/test2");
+  const dbData = await api.get("/users")
+  console.log(dbData)
   return (
     <div className="grid justify-center items-center h-screen bg-white text-black">
       <HomePage testData={data1} test2Data={data2} />
