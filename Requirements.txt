@@ -7,4 +7,3 @@ dotenv;
 google-genai;
 asyncpg;
 tortoise-orm;
-postgressql;
