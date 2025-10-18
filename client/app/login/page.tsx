@@ -2,6 +2,7 @@
 import React from 'react'
 import { useState } from "react";
 import ButtonUI from "../compoents/ui/Button";
+import Navbar from '../compoents/ui/Navbar';
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
