@@ -5,6 +5,7 @@ import uvicorn
 from pydantic import BaseModel
 import logging
 from db.main import connect_to_db
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -23,7 +24,9 @@ load_dotenv()
 frontend_env = os.getenv("FRONTEND_URL")
 if frontend_env:
     _stripped = frontend_env.strip("[").strip("]")
-    origins = [o.strip().strip("'").strip('"') for o in _stripped.split(",") if o.strip()]
+    origins = [
+        o.strip().strip("'").strip('"') for o in _stripped.split(",") if o.strip()
+    ]
 else:
     origins = []
 logger.info(f"CORS origins configured: {origins}")
@@ -38,13 +41,22 @@ app.add_middleware(
 # db connect
 connect_to_db(app=app)
 
-# import route
-from db.userRoute import userRouter
-app.include_router(userRouter,prefix="/users")
+# Import routers
+from routers import ai_router, user_router
+
+# Include routers with proper prefixes and tags
+app.include_router(user_router, prefix="/users", tags=["Users"])
+app.include_router(ai_router, prefix="/ai", tags=["AI"])
+
+logger.info(
+    f"routes configured : \n" + "\n".join([f"   {i}" for i in app.routes])
+)  # app.routes
+
 
 @app.get("/")
 def read_root():
     return {"message": "Hello, world!"}
+
 
 @app.get("/test")
 def get_test():
@@ -120,9 +132,6 @@ if __name__ == "__main__":
     This is the main entry point of the application. It starts the Uvicorn server
     on port 8000 and prints a message to the console.
     """
-    from route.ai import ai_router
-
-    app.include_router(ai_router, prefix="/ai", tags=["ai"])
 
     PORT = int(os.getenv("PORT", 8000))
     config = uvicorn.Config(app=app, port=PORT)
