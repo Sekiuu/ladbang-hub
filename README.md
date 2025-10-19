@@ -30,3 +30,7 @@ To connect database add DB_URL in .env file
 \*\* be carefull we got "devlopment" branch and "public" branch
 
 - for devlopmemnt use "devlopment"
+
+To Test API in server
+
+- run server and add this in url : http//:{server ip}:8000/docs
