@@ -6,7 +6,7 @@ class User(Model):
     username = fields.CharField(max_length=64, unique=True, description="username")
     email = fields.CharField(max_length=255, unique=True, description="email")
     password = fields.CharField(max_length=255, description="password_hash")
-    created_at = fields.DatetimeField(auto_now_add=True)
+    created_at = fields.DatetimeField()
 
     class Meta:
         table = "users"

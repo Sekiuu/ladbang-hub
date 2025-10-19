@@ -3,23 +3,30 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 import uvicorn
 from pydantic import BaseModel
-import re
-from tortoise.contrib.fastapi import register_tortoise
-from models import User
+import logging
+from db.main import connect_to_db
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 items = []
+
+
 app = FastAPI()
+
 
 # CORS for local development: allow frontend origins and POST/GET, etc.
 from dotenv import load_dotenv
 
 load_dotenv()
+
 frontend_env = os.getenv("FRONTEND_URL")
 if frontend_env:
     _stripped = frontend_env.strip("[").strip("]")
     origins = [o.strip().strip("'").strip('"') for o in _stripped.split(",") if o.strip()]
 else:
     origins = []
-print(origins, type(origins))
+logger.info(f"CORS origins configured: {origins}")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -27,31 +34,17 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-DB_URL = os.getenv("DB_URL")
-# Normalize DB scheme for Tortoise (it expects 'postgres://')
-if DB_URL:
-    # Trim whitespace and surrounding quotes that may come from env formatting
-    DB_URL = DB_URL.strip().strip("'").strip('"')
-    # Case-insensitive replace of a leading 'postgresql://' with 'postgres://'
-    DB_URL = re.sub(r"^postgresql://", "postgres://", DB_URL, flags=re.IGNORECASE)
-print(DB_URL)
-register_tortoise(
-    app=app,
-    db_url=DB_URL,
-    modules={"models": ["models"]},
-    generate_schemas=True,
-    add_exception_handlers=True,
-)
 
+# db connect
+connect_to_db(app=app)
+
+# import route
+from db.userRoute import userRouter
+app.include_router(userRouter,prefix="/users")
 
 @app.get("/")
 def read_root():
     return {"message": "Hello, world!"}
-
-@app.get("/users")
-async def create_user():
-    user = await User.all()
-    return {"body":user,"message":f"all users in database ${len(user)}","success":True}
 
 @app.get("/test")
 def get_test():
@@ -127,7 +120,7 @@ if __name__ == "__main__":
     This is the main entry point of the application. It starts the Uvicorn server
     on port 8000 and prints a message to the console.
     """
-    from ai import ai_router
+    from route.ai import ai_router
 
     app.include_router(ai_router, prefix="/ai", tags=["ai"])
 
