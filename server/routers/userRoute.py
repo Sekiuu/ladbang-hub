@@ -3,6 +3,14 @@ from db.models import User
 from pydantic import BaseModel
 import logging
 
+from schemas import UserBase
+
+
+class VerifyCredentials(BaseModel):
+    email: str
+    password: str
+
+
 # Configure logging
 logger = logging.getLogger(__name__)
 
@@ -16,17 +24,13 @@ async def get_users():
     try:
         users = await User.all()
         logger.info(f"Successfully retrieved {len(users)} users from database")
-        return {
-            "body": users,
-            "message": f"Retrieved {len(users)} users from database",
-            "success": True,
-        }
+        return users
     except Exception as e:
         logger.error(f"Error retrieving users: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 
-@user_router.get("/{user_id}", response_model=dict)
+@user_router.get("/{user_id}")
 async def get_user(user_id: int):
     """Get a specific user by ID"""
     try:
@@ -35,27 +39,73 @@ async def get_user(user_id: int):
             raise HTTPException(status_code=404, detail="User not found")
 
         logger.info(f"Successfully retrieved user {user_id}")
-        return {
-            "body": user,
-            "message": f"Retrieved user {user_id}",
-            "success": True,
-        }
+        return user
     except Exception as e:
         logger.error(f"Error retrieving user {user_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 
-@user_router.post("/", response_model=dict)
-async def create_user(user: User):
+@user_router.post("/")
+async def create_user(user_data: UserBase):
     """Create a new user"""
     try:
-        await User.save(user)  # user.save()
+        # Check if user already exists
+        existing_user = await User.filter(email=user_data.email).first()
+        if existing_user:
+            raise HTTPException(
+                status_code=400, detail="User with this email already exists"
+            )
+
+        existing_username = await User.filter(username=user_data.username).first()
+        if existing_username:
+            raise HTTPException(
+                status_code=400, detail="User with this username already exists"
+            )
+
+        # Create new user
+        user = await User.create(
+            username=user_data.username,
+            email=user_data.email,
+            password=user_data.password,  # In production, hash this password
+            created_at=User.created_at.default(),
+        )
+
         logger.info(f"Successfully created user {user.username}")
-        return {
-            "body": user,
-            "message": f"Created user {user.username}",
-            "success": True,
-        }
+        return user
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error creating user: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+
+
+# to verify users
+@user_router.post("/verify")
+async def verify_user(credentials: VerifyCredentials):
+    """Verify user credentials for authentication"""
+    try:
+        user = await User.filter(email=credentials.email).first()
+        if not user:
+            return {
+                "message": "Invalid Email",
+                "body": None,
+                "success": False,
+            }
+
+        # In production, use proper password hashing (bcrypt, etc.)
+        if user.password != credentials.password:
+            return {
+                "message": "Invalid Password",
+                "body": None,
+                "success": False,
+            }
+
+        logger.info(f"Successfully verified user {user.username}")
+        return {"message": "User verified", "body": user, "success": True}
+    except Exception as e:
+        logger.error(f"Error verifying user: {str(e)}")
+        return {
+            "message": "Server error",
+            "body": None,
+            "success": False,
+        }
