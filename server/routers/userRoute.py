@@ -43,3 +43,19 @@ async def get_user(user_id: int):
     except Exception as e:
         logger.error(f"Error retrieving user {user_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+
+
+@user_router.post("/", response_model=dict)
+async def create_user(user: User):
+    """Create a new user"""
+    try:
+        await User.save(user)  # user.save()
+        logger.info(f"Successfully created user {user.username}")
+        return {
+            "body": user,
+            "message": f"Created user {user.username}",
+            "success": True,
+        }
+    except Exception as e:
+        logger.error(f"Error creating user: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
