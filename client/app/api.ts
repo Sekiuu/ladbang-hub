@@ -1,13 +1,14 @@
 import axios from "axios";
 
 export type ResponseData = {
-  body: JSON;
+  body: any;
   message: string;
   success: boolean;
 };
 
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
-console.log("heheha: "+ backendUrl);
+const backendUrl =
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+console.log("heheha: " + backendUrl);
 // Simple, typed GET helper with optional query params
 export async function apiGet(
   path: string,

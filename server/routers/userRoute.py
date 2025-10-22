@@ -91,7 +91,6 @@ async def verify_user(credentials: VerifyCredentials):
                 "body": None,
                 "success": False,
             }
-
         # In production, use proper password hashing (bcrypt, etc.)
         if user.password != credentials.password:
             return {
@@ -101,7 +100,16 @@ async def verify_user(credentials: VerifyCredentials):
             }
 
         logger.info(f"Successfully verified user {user.username}")
-        return {"message": "User verified", "body": user, "success": True}
+        return {
+            "message": "User verified",
+            "body": UserBase(
+                id=user.id,
+                username=user.username,
+                email=user.email,
+                password=user.password,
+            ),
+            "success": True,
+        }
     except Exception as e:
         logger.error(f"Error verifying user: {str(e)}")
         return {

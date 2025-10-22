@@ -1,7 +1,4 @@
-from email import message
 from pydantic import BaseModel
-from typing import Optional
-from datetime import datetime
 
 
 class UserBase(BaseModel):
@@ -12,7 +9,7 @@ class UserBase(BaseModel):
 
 
 class ResponseData(BaseModel):
-    body: dict
+    body: any
     message: str
     success: bool
 
