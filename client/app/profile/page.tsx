@@ -37,7 +37,7 @@ export default function ProfilePage() {
                 User ID
               </label>
               <p className="mt-1 text-sm text-gray-900">
-                {session?.user?.id || "Not available"}
+                {(session?.user as any)?.id || "Not available"}
               </p>
             </div>
           </div>

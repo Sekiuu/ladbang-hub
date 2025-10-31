@@ -1,13 +1,13 @@
 "use client";
 import React from "react";
 import { useState } from "react";
+import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import ButtonUI from "../components/ui/Button";
-import Navbar from "../components/ui/Navbar";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -19,13 +19,9 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      console.log({
-        email,
-        password,
-        redirect: false,
-      });
+      // Use NextAuth credentials provider for username/password.
       const result = await signIn("credentials", {
-        email,
+        username,
         password,
         redirect: false,
       });
@@ -41,6 +37,14 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
+  React.useEffect(() => {
+    try {
+      const saved = localStorage.getItem("savedEmail");
+      if (saved) setUsername(saved);
+    } catch (e) {
+      // ignore in non-browser
+    }
+  }, []);
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
       <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-xl border border-gray-100">
@@ -54,16 +58,16 @@ export default function LoginPage() {
               htmlFor="email"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Email
+              Username
             </label>
             <input
               type="email"
               id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
-              placeholder="กรอกอีเมลของคุณ"
+              placeholder="Username"
             />
           </div>
           <div>
@@ -71,7 +75,7 @@ export default function LoginPage() {
               htmlFor="password"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              password
+              Password
             </label>
             <input
               type="password"
@@ -80,7 +84,7 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
-              placeholder="กรอกรหัสผ่าน"
+              placeholder="Password"
             />
           </div>
           <ButtonUI
@@ -90,11 +94,20 @@ export default function LoginPage() {
           >
             {isLoading ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ"}
           </ButtonUI>
+          <div className="text-center text-sm text-gray-500 ">
+            -------------------------------- OR --------------------------------
+          </div>
+          <div className="text-center mt-2">
+            <ButtonUI type="button" variant="ghost" size="md" className="w-full" onClick={() => signIn("google", { callbackUrl: "/signin?from=google" })}>
+              Sign in with Google
+            </ButtonUI>
+          </div>
+
           <div className="text-center text-sm text-gray-500 mt-4">
             ยังไม่มีบัญชี?{" "}
-            <a href="#" className="text-purple-600 hover:underline">
+            <Link href="/signin" className="text-purple-600 hover:underline">
               สมัครสมาชิก
-            </a>
+            </Link>
           </div>
         </form>
       </div>
