@@ -1,3 +1,4 @@
+from typing import Any
 from pydantic import BaseModel
 
 
@@ -9,7 +10,7 @@ class UserBase(BaseModel):
 
 
 class ResponseData(BaseModel):
-    body: any
+    body: Any
     message: str
     success: bool
 
