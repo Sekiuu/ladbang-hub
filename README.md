@@ -3,7 +3,7 @@
 ## Before start project make sure your create .venv in this directory
 
 - works with python 3.11.9
-- to create .venv you can run this command in terminal : python -m venv .venv
+- to create .venv you can run this command in terminal : py -3.11.9 -m venv .venv
   \*for dev after created .venv you must create file .gitignore in path .venv/
 
 ## To install python pakages you have to run .venv first
