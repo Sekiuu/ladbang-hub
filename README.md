@@ -25,7 +25,7 @@ Then use this comman to install packages for python : pip install -r requirement
 
 \*\* To run server, run this command in terminal
 
-- cd server-fastApi
+- cd server
 - uvicorn main:app --reload
 
 ## To connect database add DB_URL in .env file
