@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import ButtonUI from "../components/ui/Button";
 
 export default function LoginPage() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +21,7 @@ export default function LoginPage() {
     try {
       // Use NextAuth credentials provider for username/password.
       const result = await signIn("credentials", {
-        username,
+        email,
         password,
         redirect: false,
       });
@@ -40,7 +40,7 @@ export default function LoginPage() {
   React.useEffect(() => {
     try {
       const saved = localStorage.getItem("savedEmail");
-      if (saved) setUsername(saved);
+      if (saved) setEmail(saved);
     } catch (e) {
       // ignore in non-browser
     }
@@ -58,16 +58,16 @@ export default function LoginPage() {
               htmlFor="email"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Username
+              Email
             </label>
             <input
               type="email"
               id="email"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
-              placeholder="Username"
+              placeholder="Email"
             />
           </div>
           <div>
@@ -98,7 +98,15 @@ export default function LoginPage() {
             -------------------------------- OR --------------------------------
           </div>
           <div className="text-center mt-2">
-            <ButtonUI type="button" variant="ghost" size="md" className="w-full" onClick={() => signIn("google", { callbackUrl: "/signin?from=google" })}>
+            <ButtonUI
+              type="button"
+              variant="ghost"
+              size="md"
+              className="w-full"
+              onClick={() =>
+                signIn("google", { callbackUrl: "/signin?from=google" })
+              }
+            >
               Sign in with Google
             </ButtonUI>
           </div>
