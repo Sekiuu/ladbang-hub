@@ -9,4 +9,3 @@ from .ai import ai_router
 from .userRoute import user_router
 
 __all__ = ["ai_router", "user_router"]
-
