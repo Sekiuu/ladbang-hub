@@ -9,6 +9,13 @@ class UserBase(BaseModel):
     email: str
     password: str
 
+class RecordBase(BaseModel):
+    id: str
+    user_id: str
+    amout: float
+    type: str
+    detail: str
+    tag: str
 
 class ResponseData(BaseModel):
     body: Any
