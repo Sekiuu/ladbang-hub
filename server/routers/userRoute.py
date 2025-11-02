@@ -3,7 +3,7 @@ from db.models import User
 from pydantic import BaseModel
 import logging
 
-from schemas import UserBase
+from schemes import UserBase
 
 
 class VerifyCredentials(BaseModel):
