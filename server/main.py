@@ -30,7 +30,8 @@ if frontend_env:
         o.strip().strip("'").strip('"') for o in _stripped.split(",") if o.strip()
     ]
 else:
-    origins = []
+    # Default to localhost for development
+    origins = ["http://localhost:3000"]
 logger.info(f"CORS origins configured: {origins}")
 app.add_middleware(
     CORSMiddleware,
