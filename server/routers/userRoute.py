@@ -3,7 +3,7 @@ from db.models import User
 from pydantic import BaseModel
 import logging
 
-from schemes import UserBase
+from schemes import UserBase, UserCreate
 
 
 class VerifyCredentials(BaseModel):
@@ -46,7 +46,7 @@ async def get_user(user_id: int):
 
 
 @user_router.post("/")
-async def create_user(user_data: UserBase):
+async def create_user(user_data: UserCreate):
     """Create a new user"""
     try:
         # Check if user already exists

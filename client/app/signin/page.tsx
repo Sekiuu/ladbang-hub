@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import ButtonUI from "../components/ui/Button";
 import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
-
+import { api } from "../api";
 
 export default function Page() {
   const [name, setName] = useState("");
@@ -24,6 +24,8 @@ export default function Page() {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+    // const id = "";
+    api.post("/users", { name, email, password });
     try {
       // frontend-only scaffold: save the email so Login can prefill.
       // Real signup should call your backend API here.
@@ -62,34 +64,74 @@ export default function Page() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-xl border border-gray-100">
         <form onSubmit={handleSubmit} className="space-y-6">
-          <h2 className="text-3xl font-bold text-center text-purple-700 mb-6">Sign in</h2>
+          <h2 className="text-3xl font-bold text-center text-purple-700 mb-6">
+            Sign in
+          </h2>
           {error && <p className="text-red-500 text-center">{error}</p>}
 
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">Username</label>
-            <input id="username" value={name} onChange={(e) => setName(e.target.value)} required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400" placeholder="ชื่อของคุณ" />
+            <label
+              htmlFor="username"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Username
+            </label>
+            <input
+              id="username"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+              placeholder="ชื่อของคุณ"
+            />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400" placeholder="รหัสผ่านอย่างน้อย 8 ตัว" />
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+              placeholder="รหัสผ่านอย่างน้อย 8 ตัว"
+            />
           </div>
 
-          <ButtonUI type="submit" disabled={isLoading} className="w-full py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-lg shadow-md hover:from-purple-600 hover:to-pink-600 transition">
+          <ButtonUI
+            type="submit"
+            disabled={isLoading}
+            className="w-full py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-lg shadow-md hover:from-purple-600 hover:to-pink-600 transition"
+          >
             {isLoading ? "กำลังสมัคร..." : "สมัครสมาชิก"}
           </ButtonUI>
 
           <div className="text-center text-sm text-gray-500 ">
             -------------------------------- OR --------------------------------
-          <div className="text-center mt-2">
-            <ButtonUI type="button" variant="ghost" size="md" className="w-full" onClick={() => signIn("google", { callbackUrl: "/" })}>Sign in with Google</ButtonUI>
-          </div>
-
+            <div className="text-center mt-2">
+              <ButtonUI
+                type="button"
+                variant="ghost"
+                size="md"
+                className="w-full"
+                onClick={() => signIn("google", { callbackUrl: "/" })}
+              >
+                Sign in with Google
+              </ButtonUI>
+            </div>
           </div>
         </form>
         <div className="text-center text-sm text-gray-500 mt-4">
-          มีบัญชีอยู่แล้ว? {" "}
-          <Link href="/login" className="text-purple-600 hover:underline">เข้าสู่ระบบ</Link>
+          มีบัญชีอยู่แล้ว?{" "}
+          <Link href="/login" className="text-purple-600 hover:underline">
+            เข้าสู่ระบบ
+          </Link>
         </div>
       </div>
     </div>
