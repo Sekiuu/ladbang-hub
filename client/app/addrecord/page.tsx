@@ -55,9 +55,7 @@ export default function Home() {
 
   const loadTransactions = async () => {
     try {
-      const response = await api.get("/transactions/user", {
-        user_id: (session?.user as UserBase)?.id,
-      });
+      const response = await api.get(`/transactions/user/${(session?.user as UserBase)?.id}`);
       if (response?.success) {
         setTransactions(response.body || []);
       }
