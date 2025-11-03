@@ -19,7 +19,6 @@ export default function Home() {
   const { data: session } = useSession();
   const [amount, setAmount] = useState("");
   const [detail, setDetail] = useState("");
-  const [showBalance, setShowBalance] = useState(0);
   const [type, setType] = useState<"income" | "expense">("income");
   const tag = "";
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -38,24 +37,20 @@ export default function Home() {
   // Calculate balance when transactions change
   useEffect(() => {
     // ผลรวมจาก transactions เดิม
+    console.log(transactions);
     const transactionsBalance = transactions.reduce((acc, t) => {
       return acc + (t.type === "income" ? Number(t.amount) : -Number(t.amount));
     }, 0);
 
     setBalance(transactionsBalance);
+    console.log(transactionsBalance, balance);
   }, [transactions]);
-
-  useEffect(() => {
-    // แก้ showBalance แบบ realtime ตาม amount ใหม่
-    const showBalance =
-      balance +
-      (type === "income" ? Number(amount || 0) : -Number(amount || 0));
-    setShowBalance(showBalance);
-  }, [amount, type]);
 
   const loadTransactions = async () => {
     try {
-      const response = await api.get(`/transactions/user/${(session?.user as UserBase)?.id}`);
+      const response = await api.get(
+        `/transactions/user/${(session?.user as UserBase)?.id}`
+      );
       if (response?.success) {
         setTransactions(response.body || []);
       }
@@ -113,7 +108,7 @@ export default function Home() {
             ยอดเงินคงเหลือ
           </h2>
           <p className="text-3xl font-bold text-purple-600">
-            ฿{showBalance.toLocaleString()}
+            ฿{balance.toLocaleString()}
           </p>
         </div>
 
