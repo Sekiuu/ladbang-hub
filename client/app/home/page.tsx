@@ -96,14 +96,14 @@ export default function Home() {
     <div className="min-h-screen p-8">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-lg shadow p-6 mb-8">
-          <h2 className="text-2xl font-bold mb-4">ยอดเงินคงเหลือ</h2>
+          <h2 className="text-2xl font-bold mb-4 text-gray-700">ยอดเงินคงเหลือ</h2>
           <p className="text-3xl font-bold text-purple-600">
             ฿{balance.toLocaleString()}
           </p>
         </div>
 
         <div className="bg-white rounded-lg shadow p-6 mb-8">
-          <h2 className="text-2xl font-bold mb-6">เพิ่มธุรกรรมใหม่</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-700">เพิ่มธุรกรรมใหม่</h2>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
@@ -151,7 +151,7 @@ export default function Home() {
                 required
                 min="0"
                 step="0.01"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 text-gray-700"
                 placeholder="ใส่จำนวนเงิน"
               />
             </div>
@@ -165,7 +165,7 @@ export default function Home() {
                 value={detail}
                 onChange={(e) => setDetail(e.target.value)}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 text-gray-700"
                 placeholder="ใส่รายละเอียด"
               />
             </div>
@@ -181,7 +181,7 @@ export default function Home() {
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-2xl font-bold mb-6">ประวัติธุรกรรม</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-700">ประวัติธุรกรรม</h2>
           
           <div className="space-y-4">
             {transactions.map((t) => (
