@@ -18,6 +18,8 @@ type Transaction = {
 export default function Home() {
   const { data: session } = useSession();
   const [amount, setAmount] = useState("");
+  const [income, setIncome] = useState(0);
+  const [expense, setExpense] = useState(0);
   const [detail, setDetail] = useState("");
   const [type, setType] = useState<"income" | "expense">("income");
   const tag = "";
@@ -40,7 +42,12 @@ export default function Home() {
       return acc + (t.type === "income" ? t.amount : -t.amount);
     }, 0);
     setBalance(newBalance);
-  }, [transactions]);
+  }, [transactions, amount]);
+
+  useEffect(() => {
+    const newBalance = income - expense;
+    setBalance(newBalance);
+  }, [income, expense]);
 
   const loadTransactions = async () => {
     try {
