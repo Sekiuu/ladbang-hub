@@ -7,7 +7,6 @@ import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { api } from "../api";
 
-
 export default function Page() {
   const id = "";
   const [username, setUsername] = useState("");
@@ -26,6 +25,8 @@ export default function Page() {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+    // const id = "";
+    api.post("/users", { name, email, password });
     try {
       // Send data to backend API
       const response = await api.post("/users", {
@@ -82,8 +83,21 @@ export default function Page() {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400" placeholder="รหัสผ่านอย่างน้อย 8 ตัว" />
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+              placeholder="รหัสผ่านอย่างน้อย 8 ตัว"
+            />
           </div>
 
           <div>
@@ -97,10 +111,17 @@ export default function Page() {
 
           <div className="text-center text-sm text-gray-500 ">
             -------------------------------- OR --------------------------------
-          <div className="text-center mt-2">
-            <ButtonUI type="button" variant="ghost" size="md" className="w-full" onClick={() => signIn("google", { callbackUrl: "/" })}>Sign in with Google</ButtonUI>
-          </div>
-
+            <div className="text-center mt-2">
+              <ButtonUI
+                type="button"
+                variant="ghost"
+                size="md"
+                className="w-full"
+                onClick={() => signIn("google", { callbackUrl: "/" })}
+              >
+                Sign in with Google
+              </ButtonUI>
+            </div>
           </div>
         </form>
         <div className="text-center text-sm text-gray-500 mt-4">
