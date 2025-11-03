@@ -77,12 +77,7 @@ export default function LandingPage() {
                 >
                   Get Started
                 </Link>
-                <Link
-                  href="/login"
-                  className="inline-block bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold border-2 border-blue-600 hover:bg-blue-50 transition"
-                >
-                  Sign In
-                </Link>
+                
               </div>
               <p className="text-sm text-gray-500">
                 Demo credentials: admin@example.com / password

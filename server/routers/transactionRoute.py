@@ -30,6 +30,23 @@ async def get_records():
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 
+@transaction_router.post("/")
+async def create_record(record_data: TransactionBase):
+    try:
+        record = await Transactions.create(
+            user_id=record_data.user_id,
+            amout=record_data.amout,
+            type=record_data.type,
+            detail=record_data.detail,
+            tag=record_data.tag,
+        )
+        logger.info(f"Record created successfully: {record}")
+        return record
+    except Exception as e:
+        logger.error(f"Error creating record: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+
+
 @transaction_router.get("/{record_id}")
 async def get_record(record_id: str):
     try:
