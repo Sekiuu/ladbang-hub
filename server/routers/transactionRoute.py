@@ -112,11 +112,14 @@ async def create_record_with_image(
     try:
         transaction_data = await analyze_transaction_from_image(image_parts, user_id)
         logger.info(f"AI analysis result: {transaction_data}")
-
         # Create the record in the database using the data from the AI
-        record = await Transactions.create(**transaction_data)
-        logger.info(f"Record created successfully from AI data: {record.id}")
-        return record
+        records = []
+        for item in transaction_data:
+            item["user_id"] = user_id
+            record = await Transactions.create(**item)
+            records.append(record)
+            logger.info(f"Record created successfully from AI data: {record.id}")
+        return records
     except Exception as e:
         # This will catch errors from both the AI call and the database creation
         logger.error(f"Error creating record from image: {str(e)}")

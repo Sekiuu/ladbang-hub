@@ -41,7 +41,9 @@ async def analyze_transaction_from_image(image_data: list, user_id: str):
     # It's crucial to be specific about the desired JSON structure.
     prompt = f"""
     Analyze the attached image(s) of a receipt. Extract the following details
-    and return them as Array/List of JSON object:
+    and return them as Array of JSON and return only the JSON array.
+    the JSON object should have the following structure:
+    
     - "amout": The total amount of the transaction as a float, defaulting to 0.
     - "type": The type of transaction, which should be "expense".
     - "detail": A brief description of the items or service.
@@ -62,14 +64,15 @@ async def analyze_transaction_from_image(image_data: list, user_id: str):
         # The response text should be a JSON string. To make it more robust,
         # we'll clean it up in case the model wraps it in markdown.
         response_text = response.text
+        logger.info(f"AI analysis response: {response_text}")
         # Find the start and end of the JSON object
-        json_start = response_text.find("{")
-        json_end = response_text.rfind("}") + 1
+        json_start = response_text.find("[")
+        json_end = response_text.rfind("]") + 1
         json_string = response_text[json_start:json_end]
         transactions_data = json.loads(json_string)
         # for item in transactions_data:
         #     item["user_id"] = user_id
-        logger.info(f"AI analysis result: {transactions_data}")
+        # logger.info(f"AI analysis result: {transactions_data}")
         return transactions_data
 
     except Exception as e:
