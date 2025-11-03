@@ -66,7 +66,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 transition text-gray-700"
               placeholder="Email"
             />
           </div>
@@ -83,7 +83,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 transition text-gray-700"
               placeholder="Password"
             />
           </div>
@@ -102,11 +102,16 @@ export default function LoginPage() {
               type="button"
               variant="ghost"
               size="md"
-              className="w-full"
+              className="w-full flex items-center justify-center gap-2"
               onClick={() =>
                 signIn("google", { callbackUrl: "/signin?from=google" })
               }
             >
+              <img
+                  src="https://www.svgrepo.com/show/355037/google.svg"
+                  alt="Google logo"
+                  className="w-5 h-5"
+                />
               Sign in with Google
             </ButtonUI>
           </div>
