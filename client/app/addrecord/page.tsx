@@ -30,7 +30,7 @@ export default function Home() {
 
   useEffect(() => {
     if ((session?.user as UserBase)?.id) {
-      // loadTransactions();
+      loadTransactions();
     }
     console.log((session?.user as UserBase)?.id);
   }, [session]);
@@ -55,7 +55,7 @@ export default function Home() {
 
   const loadTransactions = async () => {
     try {
-      const response = await api.get("/transactions", {
+      const response = await api.get("/transactions/user", {
         user_id: (session?.user as UserBase)?.id,
       });
       if (response?.success) {

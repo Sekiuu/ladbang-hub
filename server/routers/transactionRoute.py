@@ -19,6 +19,22 @@ logger = logging.getLogger(__name__)
 transaction_router = APIRouter(tags=["Transactions"])
 
 
+@transaction_router.get("/user/{user_id}")
+async def get_records_by_user(user_id: str):
+    try:
+        logger.info(f"Retrieving records for user {user_id}")
+        records = await Transactions.filter(user_id=user_id).all()
+        logger.info(f"Successfully retrieved {len(records)} records from database")
+        return {
+            "body": records,
+            "message": "Records retrieved successfully",
+            "success": True,
+        }
+    except Exception as e:
+        logger.error(f"Error retrieving records for user {user_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+
+
 @transaction_router.get("/")
 async def get_records():
     try:

@@ -16,7 +16,7 @@ class User(Model):
 
 class Transactions(Model):
     id = fields.UUIDField(pk=True)
-    user_id = fields.CharField(max_length=255, description="owner")
+    user_id = fields.TextField(max_length=255, description="owner")
     amount = fields.FloatField(description="amount")
     type = fields.CharField(max_length=255, description="type of record")
     detail = fields.CharField(max_length=10**4, description="detail")
