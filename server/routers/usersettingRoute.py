@@ -4,7 +4,7 @@ from schemes import UserSettingBase
 
 import logging
 
-usersetting_router = APIRouter(tags=["Financial"])
+usersetting_router = APIRouter(tags=["Usersetting"])
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +54,7 @@ async def update_financial_settings(user_id: str, financial_data: UserSettingBas
         record = await UsersSetting.get(user_id=user_id)
         if not record:
             raise HTTPException(status_code=404, detail="Financial settings not found")
-
+        logger.info(f"Updating financial settings for user : {record.user_id}")
         await record.select_for_update().update(
             daily_spending_limit=financial_data.daily_spending_limit,
             monthly_income=financial_data.monthly_income,

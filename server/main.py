@@ -50,7 +50,7 @@ def configure_routers(app: FastAPI):
     # you can add more routers here
     app.include_router(user_router, prefix="/users", tags=["Users"])
     app.include_router(transaction_router, prefix="/transactions")
-    app.include_router(usersetting_router, prefix="/financial")
+    app.include_router(usersetting_router, prefix="/usersettings")
     app.include_router(ai_router, prefix="/ai", tags=["AI"])
 
     # Print configured routes
