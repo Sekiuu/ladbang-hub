@@ -1,27 +1,30 @@
 from fastapi import HTTPException, APIRouter
-from db.models import Record
-from pydantic import BaseModel
-import logging
-import datetime
+from db.models import Transactions
 
-from schemes import RecordBase
+# from pydantic import BaseModel
+import logging
+
+# import datetime
+
+from schemes import TransactionBase
 
 
 # Configure logging
 logger = logging.getLogger(__name__)
 
 # Initialize router with tags for documentation
-record_router = APIRouter(tags=["Records"])
+transaction_router = APIRouter(tags=["Transactions"])
 
-@record_router.post("/")
-async def create_record(record_data: RecordBase):
+
+@transaction_router.post("/")
+async def create_record(record_data: TransactionBase):
     try:
-        record = await Record.create(
-            user_id = record_data.user_id,
-            amout = record_data.amout,
-            type = record_data.type,
-            detail = record_data.detail,
-            tag = record_data.tag,
+        record = await Transactions.create(
+            user_id=record_data.user_id,
+            amout=record_data.amout,
+            type=record_data.type,
+            detail=record_data.detail,
+            tag=record_data.tag,
         )
         logger.info(f"Record created successfully: {record}")
         return record
@@ -30,21 +33,21 @@ async def create_record(record_data: RecordBase):
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 
-@record_router.get("/")
+@transaction_router.get("/")
 async def get_records():
     try:
-        records = await Record.all()
+        records = await Transactions.all()
         logger.info(f"Successfully retrieved {len(records)} records from database")
         return records
     except Exception as e:
         logger.error(f"Error retrieving records: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
-    
 
-@record_router.get("/{record_id}")
+
+@transaction_router.get("/{record_id}")
 async def get_record(record_id: str):
     try:
-        record = await Record.get(id=record_id)
+        record = await Transactions.get(id=record_id)
         if not record:
             raise HTTPException(status_code=404, detail="Record not found")
 
@@ -55,19 +58,19 @@ async def get_record(record_id: str):
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 
-@record_router.put("/{record_id}")
-async def update_record(record_id: str, record_data: RecordBase):
+@transaction_router.put("/{record_id}")
+async def update_record(record_id: str, record_data: TransactionBase):
     try:
-        record = await Record.get(id=record_id)
+        record = await Transactions.get(id=record_id)
         if not record:
             raise HTTPException(status_code=404, detail="Record not found")
 
         await record.update_or_create(
-            user_id = record_data.user_id,
-            amout = record_data.amout,
-            type = record_data.type,
-            detail = record_data.detail,
-            tag = record_data.tag,
+            user_id=record_data.user_id,
+            amout=record_data.amout,
+            type=record_data.type,
+            detail=record_data.detail,
+            tag=record_data.tag,
         )
         logger.info(f"Successfully updated record {record_id}")
         return record
@@ -76,10 +79,10 @@ async def update_record(record_id: str, record_data: RecordBase):
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 
-@record_router.delete("/{record_id}")
+@transaction_router.delete("/{record_id}")
 async def delete_record(record_id: str):
     try:
-        record = await Record.get(id=record_id)
+        record = await Transactions.get(id=record_id)
         if not record:
             raise HTTPException(status_code=404, detail="Record not found")
 

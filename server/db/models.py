@@ -1,8 +1,9 @@
 from tortoise import fields
 from tortoise.models import Model
 
+
 class User(Model):
-    id = fields.UUIDField(pk=True)
+    id = fields.TextField(pk=True)
     username = fields.CharField(max_length=64, unique=True, description="username")
     email = fields.CharField(max_length=255, unique=True, description="email")
     password = fields.CharField(max_length=255, description="password_hash")
@@ -12,7 +13,8 @@ class User(Model):
         table = "users"
         indexes = ("email",)
 
-class Record(Model):
+
+class Transactions(Model):
     id = fields.UUIDField(pk=True)
     user_id = fields.CharField(max_length=255, description="owner")
     amout = fields.FloatField(description="amount")
@@ -23,5 +25,5 @@ class Record(Model):
     created_at = fields.DatetimeField(auto_now_add=True, timestamptz=True)
 
     class Meta:
-        table = "records"
+        table = "transactions"
         indexes = ("user_id", "created_at")
