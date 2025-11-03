@@ -26,12 +26,7 @@ export default function Page() {
     setIsLoading(true);
     setError(null);
     // const id = "";
-    await api.post("/users", {
-      username: name,
-      email,
-      password,
-    });
-
+    api.post("/users", { name, email, password });
     try {
       // Send data to backend API
       const response = await api.post("/users", {
@@ -84,22 +79,6 @@ export default function Page() {
               required 
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400" 
               placeholder="กรอกอีเมลของคุณ" 
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              Email
-            </label>
-            <input
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
-              placeholder="อีเมลของคุณ"
             />
           </div>
 
