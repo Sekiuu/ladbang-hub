@@ -29,16 +29,24 @@ class Transactions(Model):
         indexes = ("user_id", "created_at")
 
 
-class Financial(Model):
-    user_id = fields.TextField(pk=True)
+class UsersSetting(Model):
+    user_id = fields.TextField(pk=True, description="owner")
     daily_spending_limit = fields.FloatField(description="daily spending limit")
     monthly_income = fields.FloatField(description="monthly income")
-    notify_over_budget = fields.BooleanField(description="notify over budget", default=False)
-    notify_low_saving = fields.BooleanField(description="notify low saving", default=False)
-    goal_description = fields.CharField(max_length=10**4, description="goal description")
-    conclusion_routine = fields.CharField(max_length=10**4, description="conclusion routine")
+    notify_over_budget = fields.BooleanField(
+        description="notify over budget", default=False
+    )
+    notify_low_saving = fields.BooleanField(
+        description="notify low saving", default=False
+    )
+    goal_description = fields.CharField(
+        max_length=10**4, description="goal description"
+    )
+    conclusion_routine = fields.CharField(
+        max_length=10**4, description="conclusion routine"
+    )
     update_at = fields.DatetimeField(auto_now=True, timestamptz=True)
 
     class Meta:
-        table = "financial"
+        table = "users_setting"
         indexes = ("user_id",)

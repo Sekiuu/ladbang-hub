@@ -25,7 +25,7 @@ class TransactionBase(BaseModel):
     tag: str  # income, expense
 
 
-class FinancialBase(BaseModel):
+class UserSettingBase(BaseModel):
     user_id: str
     daily_spending_limit: float
     monthly_income: float
@@ -33,6 +33,7 @@ class FinancialBase(BaseModel):
     notify_low_saving: bool
     goal_description: str
     conclusion_routine: str
+
 
 class ResponseData(BaseModel):
     body: Any

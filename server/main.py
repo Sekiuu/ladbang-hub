@@ -7,7 +7,7 @@ from db.main import connect_to_db
 from dotenv import load_dotenv
 
 # Import routers
-from routers import ai_router, user_router, transaction_router, financial_router
+from routers import ai_router, user_router, transaction_router, usersetting_router
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -50,7 +50,7 @@ def configure_routers(app: FastAPI):
     # you can add more routers here
     app.include_router(user_router, prefix="/users", tags=["Users"])
     app.include_router(transaction_router, prefix="/transactions")
-    app.include_router(financial_router, prefix="/financial")
+    app.include_router(usersetting_router, prefix="/financial")
     app.include_router(ai_router, prefix="/ai", tags=["AI"])
 
     # Print configured routes

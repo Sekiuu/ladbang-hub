@@ -1,17 +1,18 @@
 from fastapi import HTTPException, APIRouter
-from db.models import Financial
-from schemes import FinancialBase
+from db.models import UsersSetting
+from schemes import UserSettingBase
 
 import logging
 
-financial_router = APIRouter(tags=["Financial"])
+usersetting_router = APIRouter(tags=["Financial"])
 
 logger = logging.getLogger(__name__)
 
-@financial_router.post("/")
-async def create_financial_settings(financial_data: FinancialBase):
+
+@usersetting_router.post("/")
+async def create_financial_settings(financial_data: UserSettingBase):
     try:
-        financial_record = await Financial.create(
+        financial_record = await UsersSetting.create(
             user_id=financial_data.user_id,
             daily_spending_limit=financial_data.daily_spending_limit,
             monthly_income=financial_data.monthly_income,
@@ -20,35 +21,42 @@ async def create_financial_settings(financial_data: FinancialBase):
             goal_description=financial_data.goal_description,
             conclusion_routine=financial_data.conclusion_routine,
         )
-        logger.info(f"Successfully created financial settings for user {financial_data.user_id}")
+        logger.info(
+            f"Successfully created financial settings for user {financial_data.user_id}"
+        )
         return financial_record
     except Exception as e:
-        logger.error(f"Error creating financial settings for user {financial_data.user_id}: {str(e)}")
+        logger.error(
+            f"Error creating financial settings for user {financial_data.user_id}: {str(e)}"
+        )
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 
-@financial_router.get("/{user_id}")
+@usersetting_router.get("/{user_id}")
 async def get_financial_settings(user_id: str):
     try:
-        record = await Financial.get(user_id=user_id)
+        record = await UsersSetting.get(user_id=user_id)
         if not record:
             raise HTTPException(status_code=404, detail="Financial settings not found")
 
         logger.info(f"Successfully retrieved financial settings for user {user_id}")
         return record
     except Exception as e:
-        logger.error(f"Error retrieving financial settings for user {user_id}: {str(e)}")
+        logger.error(
+            f"Error retrieving financial settings for user {user_id}: {str(e)}"
+        )
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 
-@financial_router.put("/{user_id}")
-async def update_financial_settings(user_id: str, financial_data: FinancialBase):
+@usersetting_router.put("/{user_id}")
+async def update_financial_settings(user_id: str, financial_data: UserSettingBase):
     try:
-        record = await Financial.get(user_id=user_id)
+        record = await UsersSetting.get(user_id=user_id)
         if not record:
             raise HTTPException(status_code=404, detail="Financial settings not found")
 
         await record.update_or_create(
+            user_id=user_id,
             daily_spending_limit=financial_data.daily_spending_limit,
             monthly_income=financial_data.monthly_income,
             notify_over_budget=financial_data.notify_over_budget,
@@ -63,10 +71,10 @@ async def update_financial_settings(user_id: str, financial_data: FinancialBase)
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 
-@financial_router.delete("/{user_id}")
+@usersetting_router.delete("/{user_id}")
 async def delete_financial_settings(user_id: str):
     try:
-        record = await Financial.get(user_id=user_id)
+        record = await UsersSetting.get(user_id=user_id)
         if not record:
             raise HTTPException(status_code=404, detail="Financial settings not found")
 
