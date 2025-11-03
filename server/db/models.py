@@ -40,5 +40,5 @@ class Financial(Model):
     update_at = fields.DatetimeField(auto_now=True, timestamptz=True)
 
     class Meta:
-        table = "financial"
+        table = "users_setting"
         indexes = ("user_id",)
