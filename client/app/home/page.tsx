@@ -107,7 +107,7 @@ export default function Home() {
         </div>
 
         <div className="bg-white rounded-lg shadow p-6 mb-8">
-          <h2 className="text-2xl font-bold mb-6">เพิ่มธุรกรรมใหม่</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-700">เพิ่มธุรกรรมใหม่</h2>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && <p className="text-red-500 text-center">{error}</p>}
@@ -179,7 +179,7 @@ export default function Home() {
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-2xl font-bold mb-6">ประวัติธุรกรรม</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-700">ประวัติธุรกรรม</h2>
           
           <div className="space-y-4">
             {transactions.map((t) => (
