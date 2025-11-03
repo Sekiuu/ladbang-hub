@@ -18,9 +18,8 @@ type Transaction = {
 export default function Home() {
   const { data: session } = useSession();
   const [amount, setAmount] = useState("");
-  const [income, setIncome] = useState(0);
-  const [expense, setExpense] = useState(0);
   const [detail, setDetail] = useState("");
+  const [showBalance, setShowBalance] = useState(0);
   const [type, setType] = useState<"income" | "expense">("income");
   const tag = "";
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -38,16 +37,21 @@ export default function Home() {
 
   // Calculate balance when transactions change
   useEffect(() => {
-    const newBalance = transactions.reduce((acc, t) => {
-      return acc + (t.type === "income" ? t.amount : -t.amount);
+    // ผลรวมจาก transactions เดิม
+    const transactionsBalance = transactions.reduce((acc, t) => {
+      return acc + (t.type === "income" ? Number(t.amount) : -Number(t.amount));
     }, 0);
-    setBalance(newBalance);
-  }, [transactions, amount]);
+
+    setBalance(transactionsBalance);
+  }, [transactions]);
 
   useEffect(() => {
-    const newBalance = income - expense;
-    setBalance(newBalance);
-  }, [income, expense]);
+    // แก้ showBalance แบบ realtime ตาม amount ใหม่
+    const showBalance =
+      balance +
+      (type === "income" ? Number(amount || 0) : -Number(amount || 0));
+    setShowBalance(showBalance);
+  }, [amount, type]);
 
   const loadTransactions = async () => {
     try {
@@ -107,15 +111,19 @@ export default function Home() {
     <div className="min-h-screen p-8">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-lg shadow p-6 mb-8">
-          <h2 className="text-2xl font-bold mb-4 text-gray-700">ยอดเงินคงเหลือ</h2>
+          <h2 className="text-2xl font-bold mb-4 text-gray-700">
+            ยอดเงินคงเหลือ
+          </h2>
           <p className="text-3xl font-bold text-purple-600">
-            ฿{balance.toLocaleString()}
+            ฿{showBalance.toLocaleString()}
           </p>
         </div>
 
         <div className="bg-white rounded-lg shadow p-6 mb-8">
-          <h2 className="text-2xl font-bold mb-6 text-gray-700">เพิ่มธุรกรรมใหม่</h2>
-          
+          <h2 className="text-2xl font-bold mb-6 text-gray-700">
+            เพิ่มธุรกรรมใหม่
+          </h2>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && <p className="text-red-500 text-center">{error}</p>}
 
@@ -157,11 +165,15 @@ export default function Home() {
                 type="number"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
+                onKeyDown={(e) => {
+                  if (["e", "E", "+", "-"].includes(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
                 required
                 min="0"
                 step="0.01"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 text-gray-700"
-                placeholder="ใส่จำนวนเงิน"
               />
             </div>
 
@@ -186,8 +198,10 @@ export default function Home() {
         </div>
 
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-2xl font-bold mb-6 text-gray-700">ประวัติธุรกรรม</h2>
-          
+          <h2 className="text-2xl font-bold mb-6 text-gray-700">
+            ประวัติธุรกรรม
+          </h2>
+
           <div className="space-y-4">
             {transactions.map((t) => (
               <div
