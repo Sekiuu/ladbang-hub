@@ -29,7 +29,7 @@ export default function AuthButton() {
 
   return (
     <ButtonUI
-      onClick={() => router.push("/Login")}
+      onClick={() => router.push("/login")}
       className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
     >
       LogIn
