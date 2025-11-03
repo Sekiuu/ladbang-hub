@@ -24,7 +24,11 @@ async def get_records():
     try:
         records = await Transactions.all()
         logger.info(f"Successfully retrieved {len(records)} records from database")
-        return records
+        return {
+            "body": records,
+            "message": "Records retrieved successfully",
+            "success": True,
+        }
     except Exception as e:
         logger.error(f"Error retrieving records: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
@@ -42,7 +46,7 @@ async def create_record(record_data: TransactionCreate):
         )
         logger.info(f"Record created successfully: {record}")
         return {
-            "body": record.get(user_id=record_data.user_id),
+            "body": record,
             "message": "Record created successfully",
             "success": True,
         }
