@@ -25,7 +25,12 @@ export default function Page() {
     setIsLoading(true);
     setError(null);
     // const id = "";
-    api.post("/users", { name, email, password });
+    await api.post("/users", {
+      username: name,
+      email,
+      password,
+    });
+
     try {
       // frontend-only scaffold: save the email so Login can prefill.
       // Real signup should call your backend API here.
@@ -83,6 +88,22 @@ export default function Page() {
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
               placeholder="ชื่อของคุณ"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Email
+            </label>
+            <input
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400"
+              placeholder="อีเมลของคุณ"
             />
           </div>
 

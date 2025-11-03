@@ -103,7 +103,7 @@ async def verify_user(credentials: VerifyCredentials):
         return {
             "message": "User verified",
             "body": UserBase(
-                id=user.id,
+                id=str(user.id),
                 username=user.username,
                 email=user.email,
                 password=user.password,
