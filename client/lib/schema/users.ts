@@ -1,5 +1,5 @@
 export type UserData = {
-  id: number;
+  id: string;
   username: string;
   email: string;
   password: string;
@@ -7,7 +7,7 @@ export type UserData = {
 };
 
 export type UserBase = {
-  id: number;
+  id: string;
   username: string;
   email: string;
 };

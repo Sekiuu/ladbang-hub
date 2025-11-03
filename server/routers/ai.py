@@ -44,7 +44,7 @@ async def analyze_transaction_from_image(image_data: list, user_id: str):
     and return them as Array of JSON and return only the JSON array.
     the JSON object should have the following structure:
     
-    - "amout": The total amount of the transaction as a float, defaulting to 0.
+    - "amount": The total amount of the transaction as a float, defaulting to 0.
     - "type": The type of transaction, which should be "expense".
     - "detail": A brief description of the items or service.
     - "tag": A relevant category for the expense (e.g., "food", "transportation", "groceries").

@@ -4,13 +4,14 @@ import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { api } from "../api";
 import ButtonUI from "../components/ui/Button";
+import { UserBase } from "@/lib/schema/users";
 
 type Transaction = {
   id: string;
   user_id: string;
   amount: number;
   type: "income" | "expense";
-  detail: string;
+  detail: string | "";
   tag: string;
 };
 
@@ -24,18 +25,19 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [balance, setBalance] = useState(0);
-
   // Load transactions when component mounts
+
   useEffect(() => {
-    if (session?.user?.email) {
-      loadTransactions();
+    if ((session?.user as UserBase)?.id) {
+      // loadTransactions();
     }
+    console.log((session?.user as UserBase)?.id);
   }, [session]);
 
   // Calculate balance when transactions change
   useEffect(() => {
     const newBalance = transactions.reduce((acc, t) => {
-      return acc + (t.tag === "income" ? t.amount : -t.amount);
+      return acc + (t.type === "income" ? t.amount : -t.amount);
     }, 0);
     setBalance(newBalance);
   }, [transactions]);
@@ -43,7 +45,7 @@ export default function Home() {
   const loadTransactions = async () => {
     try {
       const response = await api.get("/transactions", {
-        user_id: session?.user?.email
+        user_id: (session?.user as UserBase)?.id,
       });
       if (response?.success) {
         setTransactions(response.body || []);
@@ -59,13 +61,14 @@ export default function Home() {
     setError(null);
 
     try {
-      const response = await api.post("/transactions", {
-        user_id: session?.user?.email,
+      const transaction = {
+        user_id: (session?.user as UserBase)?.id,
         amount: parseFloat(amount),
+        detail: detail || "",
         type: type,
-        detail,
-        tag
-      });
+        tag: tag,
+      };
+      const response = await api.post("/transactions", transaction);
 
       if (response?.success) {
         // Clear form
@@ -79,6 +82,7 @@ export default function Home() {
       }
     } catch (err) {
       setError("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+      console.error(err);
     } finally {
       setIsLoading(false);
     }
@@ -104,11 +108,9 @@ export default function Home() {
 
         <div className="bg-white rounded-lg shadow p-6 mb-8">
           <h2 className="text-2xl font-bold mb-6">เพิ่มธุรกรรมใหม่</h2>
-          
+
           <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-              <p className="text-red-500 text-center">{error}</p>
-            )}
+            {error && <p className="text-red-500 text-center">{error}</p>}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -170,11 +172,7 @@ export default function Home() {
               />
             </div>
 
-            <ButtonUI
-              type="submit"
-              disabled={isLoading}
-              className="w-full"
-            >
+            <ButtonUI type="submit" disabled={isLoading} className="w-full">
               {isLoading ? "กำลังบันทึก..." : "บันทึกธุรกรรม"}
             </ButtonUI>
           </form>
@@ -182,7 +180,7 @@ export default function Home() {
 
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="text-2xl font-bold mb-6">ประวัติธุรกรรม</h2>
-          
+
           <div className="space-y-4">
             {transactions.map((t) => (
               <div
@@ -192,19 +190,19 @@ export default function Home() {
                 <div>
                   <p className="font-medium">{t.detail}</p>
                   <p className="text-sm text-gray-500">
-                    {t.tag === "income" ? "รายรับ" : "รายจ่าย"}
+                    {t.type === "income" ? "รายรับ" : "รายจ่าย"}
                   </p>
                 </div>
                 <p
                   className={`text-lg font-bold ${
-                    t.tag === "income" ? "text-green-500" : "text-red-500"
+                    t.type === "income" ? "text-green-500" : "text-red-500"
                   }`}
                 >
-                  {t.tag === "income" ? "+" : "-"}฿{t.amount.toLocaleString()}
+                  {t.type === "income" ? "+" : "-"}฿{t.amount.toLocaleString()}
                 </p>
               </div>
             ))}
-            
+
             {transactions.length === 0 && (
               <p className="text-center text-gray-500">
                 ยังไม่มีประวัติธุรกรรม
