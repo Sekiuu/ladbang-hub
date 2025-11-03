@@ -19,10 +19,18 @@ class UserCreate(BaseModel):
 class TransactionBase(BaseModel):
     id: str
     user_id: str
-    amout: float
-    type: str
+    amount: float
+    type: str  # income, expense
     detail: str
-    tag: str  # income, expense
+    tag: str
+
+
+class TransactionCreate(BaseModel):
+    user_id: str
+    amount: float
+    type: str  # income, expense
+    detail: str
+    tag: str
 
 
 class UserSettingBase(BaseModel):

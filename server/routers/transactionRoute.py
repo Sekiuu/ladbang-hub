@@ -1,7 +1,7 @@
 from fastapi import HTTPException, APIRouter, File, UploadFile
 from db.models import Transactions
 from typing import List
-from schemes import TransactionBase
+from schemes import TransactionBase, TransactionCreate, ResponseData
 
 # from pydantic import BaseModel
 import logging
@@ -24,24 +24,28 @@ async def get_records():
     try:
         records = await Transactions.all()
         logger.info(f"Successfully retrieved {len(records)} records from database")
-        return records
+        return ResponseData(
+            body=records, message="Records retrieved successfully", success=True
+        )
     except Exception as e:
         logger.error(f"Error retrieving records: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 
 @transaction_router.post("/")
-async def create_record(record_data: TransactionBase):
+async def create_record(record_data: TransactionCreate):
     try:
         record = await Transactions.create(
             user_id=record_data.user_id,
-            amout=record_data.amout,
+            amount=record_data.amount,
             type=record_data.type,
             detail=record_data.detail,
             tag=record_data.tag,
         )
         logger.info(f"Record created successfully: {record}")
-        return record
+        return ResponseData(
+            body=record, message="Transaction created successfully", success=True
+        )
     except Exception as e:
         logger.error(f"Error creating record: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
@@ -55,7 +59,9 @@ async def get_record(record_id: str):
             raise HTTPException(status_code=404, detail="Record not found")
 
         logger.info(f"Successfully retrieved record {record_id}")
-        return record
+        return ResponseData(
+            body=record, message="Record retrieved successfully", success=True
+        )
     except Exception as e:
         logger.error(f"Error retrieving record {record_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
@@ -70,7 +76,7 @@ async def update_record(record_id: str, record_data: TransactionBase):
 
         await record.update_or_create(
             user_id=record_data.user_id,
-            amout=record_data.amout,
+            amount=record_data.amount,
             type=record_data.type,
             detail=record_data.detail,
             tag=record_data.tag,

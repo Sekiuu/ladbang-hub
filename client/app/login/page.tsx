@@ -108,10 +108,10 @@ export default function LoginPage() {
               }
             >
               <img
-                  src="https://www.svgrepo.com/show/355037/google.svg"
-                  alt="Google logo"
-                  className="w-5 h-5"
-                />
+                src="https://www.svgrepo.com/show/355037/google.svg"
+                alt="Google logo"
+                className="w-5 h-5"
+              />
               Sign in with Google
             </ButtonUI>
           </div>
