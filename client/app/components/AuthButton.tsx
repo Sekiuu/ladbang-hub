@@ -21,7 +21,7 @@ export default function AuthButton() {
           onClick={() => signOut()}
           className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
         >
-          Sign Out
+          LogOut
         </ButtonUI>
       </div>
     );
@@ -29,10 +29,10 @@ export default function AuthButton() {
 
   return (
     <ButtonUI
-      onClick={() => router.push("/signin")}
+      onClick={() => router.push("/login")}
       className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
     >
-      Sign In
+      LogIn
     </ButtonUI>
   );
 }
