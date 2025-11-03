@@ -5,10 +5,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import ButtonUI from "../components/ui/Button";
 import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
+import { api } from "../api";
 
 
 export default function Page() {
-  const [name, setName] = useState("");
+  const id = "";
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -25,21 +27,23 @@ export default function Page() {
     setIsLoading(true);
     setError(null);
     try {
-      // frontend-only scaffold: save the email so Login can prefill.
-      // Real signup should call your backend API here.
-      try {
-        localStorage.setItem("savedEmail", email);
-      } catch (e) {
-        // ignore storage errors in non-browser environments
+      // Send data to backend API
+      const response = await api.post("/users", {
+        id,
+        username,
+        email,
+        password
+      });
+
+      if (!response?.success) {
+        setError(response?.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+        return;
       }
-      // If user came from Google OAuth, send them to home; otherwise to login
-      if (from === "google") {
-        router.push("/");
-      } else {
-        router.push("/login");
-      }
+
+      // ถ้าสำเร็จ redirect ไปหน้า login
+      router.push("/login");
     } catch (err) {
-      setError("เกิดข้อผิดพลาดขณะสมัครสมาชิก");
+      setError("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
     } finally {
       setIsLoading(false);
     }
@@ -50,7 +54,6 @@ export default function Page() {
     try {
       if (from === "google" && session) {
         const u = (session as any)?.user ?? (session as any);
-        if (u?.name) setName(u.name);
         if (u?.email) setEmail(u.email);
       }
     } catch (e) {
@@ -62,12 +65,20 @@ export default function Page() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-xl border border-gray-100">
         <form onSubmit={handleSubmit} className="space-y-6">
-          <h2 className="text-3xl font-bold text-center text-purple-700 mb-6">Sign in</h2>
+          <h2 className="text-3xl font-bold text-center text-purple-700 mb-6">ลงทะเบียน</h2>
           {error && <p className="text-red-500 text-center">{error}</p>}
 
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">Username</label>
-            <input id="username" value={name} onChange={(e) => setName(e.target.value)} required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400" placeholder="ชื่อของคุณ" />
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input 
+              id="email" 
+              type="email" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
+              required 
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400" 
+              placeholder="กรอกอีเมลของคุณ" 
+            />
           </div>
 
           <div>
@@ -75,8 +86,13 @@ export default function Page() {
             <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400" placeholder="รหัสผ่านอย่างน้อย 8 ตัว" />
           </div>
 
+          <div>
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+            <input id="username" type="username" value={username} onChange={(e) => setUsername(e.target.value)} required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400" placeholder="รหัสผ่านอย่างน้อย 8 ตัว" />
+          </div>
+
           <ButtonUI type="submit" disabled={isLoading} className="w-full py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-lg shadow-md hover:from-purple-600 hover:to-pink-600 transition">
-            {isLoading ? "กำลังสมัคร..." : "สมัครสมาชิก"}
+            {isLoading ? "กำลังบันทึกข้อมูล..." : "บันทึกข้อมูล"}
           </ButtonUI>
 
           <div className="text-center text-sm text-gray-500 ">
@@ -89,7 +105,7 @@ export default function Page() {
         </form>
         <div className="text-center text-sm text-gray-500 mt-4">
           มีบัญชีอยู่แล้ว? {" "}
-          <Link href="/login" className="text-purple-600 hover:underline">เข้าสู่ระบบ</Link>
+          <Link href="/login" className="text-purple-600 hover:underline">คลิกที่นี่เพื่อเข้าสู่ระบบ</Link>
         </div>
       </div>
     </div>
