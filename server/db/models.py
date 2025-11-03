@@ -1,6 +1,7 @@
 from tortoise import fields
 from tortoise.models import Model
 
+
 class User(Model):
     id = fields.UUIDField(pk=True)
     username = fields.CharField(max_length=64, unique=True, description="username")
@@ -11,6 +12,7 @@ class User(Model):
     class Meta:
         table = "users"
         indexes = ("email",)
+
 
 class Record(Model):
     id = fields.UUIDField(pk=True)

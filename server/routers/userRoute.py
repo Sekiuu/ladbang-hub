@@ -103,7 +103,7 @@ async def verify_user(credentials: VerifyCredentials):
         return {
             "message": "User verified",
             "body": UserBase(
-                id=user.id,
+                id=str(user.id),
                 username=user.username,
                 email=user.email,
                 password=user.password,
@@ -112,8 +112,9 @@ async def verify_user(credentials: VerifyCredentials):
         }
     except Exception as e:
         logger.error(f"Error verifying user: {str(e)}")
-        return {
-            "message": "Server error",
-            "body": None,
-            "success": False,
-        }
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+        # return {
+        #     "message": "Server error",
+        #     "body": None,
+        #     "success": False,
+        # }
