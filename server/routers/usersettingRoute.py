@@ -55,8 +55,7 @@ async def update_financial_settings(user_id: str, financial_data: UserSettingBas
         if not record:
             raise HTTPException(status_code=404, detail="Financial settings not found")
 
-        await record.update_or_create(
-            user_id=user_id,
+        await record.select_for_update().update(
             daily_spending_limit=financial_data.daily_spending_limit,
             monthly_income=financial_data.monthly_income,
             notify_over_budget=financial_data.notify_over_budget,
