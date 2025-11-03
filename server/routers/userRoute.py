@@ -31,7 +31,7 @@ async def get_users():
 
 
 @user_router.get("/{user_id}")
-async def get_user(user_id: int):
+async def get_user(user_id: str):
     """Get a specific user by ID"""
     try:
         user = await User.get(id=user_id)
@@ -67,7 +67,7 @@ async def create_user(user_data: UserCreate):
             username=user_data.username,
             email=user_data.email,
             password=user_data.password,  # In production, hash this password
-            created_at=User.created_at.default(),
+            # created_at=User.created_at.default(),
         )
 
         logger.info(f"Successfully created user {user.username}")
