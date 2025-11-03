@@ -7,3 +7,5 @@ dotenv;
 google-genai;
 asyncpg;
 tortoise-orm;
+Pillow;
+python-multipart;

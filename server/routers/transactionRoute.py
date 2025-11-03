@@ -1,36 +1,22 @@
-from fastapi import HTTPException, APIRouter
+from fastapi import HTTPException, APIRouter, File, UploadFile
 from db.models import Transactions
+from typing import List
+from schemes import TransactionBase
 
 # from pydantic import BaseModel
 import logging
+import io
+import PIL.Image
 
 # import datetime
 
-from schemes import TransactionBase
-
+from routers.ai import analyze_transaction_from_image
 
 # Configure logging
 logger = logging.getLogger(__name__)
 
 # Initialize router with tags for documentation
 transaction_router = APIRouter(tags=["Transactions"])
-
-
-@transaction_router.post("/")
-async def create_record(record_data: TransactionBase):
-    try:
-        record = await Transactions.create(
-            user_id=record_data.user_id,
-            amout=record_data.amout,
-            type=record_data.type,
-            detail=record_data.detail,
-            tag=record_data.tag,
-        )
-        logger.info(f"Record created successfully: {record}")
-        return record
-    except Exception as e:
-        logger.error(f"Error creating record: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 
 @transaction_router.get("/")
@@ -92,3 +78,48 @@ async def delete_record(record_id: str):
     except Exception as e:
         logger.error(f"Error deleting record {record_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+
+
+@transaction_router.post("/img-add")
+async def create_record_with_image(
+    user_id: str,
+    images: List[UploadFile] = File(..., media_type="image"),
+):
+    """
+    Accepts images, sends them to an AI for analysis, and creates a
+    transaction record from the AI's JSON response.
+    """
+    if not images:
+        raise HTTPException(status_code=400, detail="No images were uploaded.")
+
+    # Prepare images for the AI model by reading their content
+    image_parts = []
+    for image_file in images:
+        # Read image contents into memory
+        contents = await image_file.read()
+        # Use Pillow to open the image from bytes, which is what the
+        # google-generativeai library expects.
+        try:
+            img = PIL.Image.open(io.BytesIO(contents))
+            image_parts.append(img)
+        except Exception as e:
+            logger.error(f"Failed to process image {image_file.filename}: {e}")
+            raise HTTPException(
+                status_code=400, detail=f"Invalid image file: {image_file.filename}"
+            )
+
+    # Call the AI service to analyze the images and get structured data
+    try:
+        transaction_data = await analyze_transaction_from_image(image_parts, user_id)
+        logger.info(f"AI analysis result: {transaction_data}")
+
+        # Create the record in the database using the data from the AI
+        record = await Transactions.create(**transaction_data)
+        logger.info(f"Record created successfully from AI data: {record.id}")
+        return record
+    except Exception as e:
+        # This will catch errors from both the AI call and the database creation
+        logger.error(f"Error creating record from image: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to process and save transaction: {str(e)}"
+        )

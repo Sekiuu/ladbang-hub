@@ -4,6 +4,7 @@ import os
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from dotenv import load_dotenv
+import json
 import logging
 
 # Configure logging
@@ -27,6 +28,53 @@ else:
 
 class PromptRequest(BaseModel):
     prompt: str
+
+
+async def analyze_transaction_from_image(image_data: list, user_id: str):
+    """
+    Analyzes an image of a receipt and returns transaction data as JSON.
+    """
+    if not client:
+        raise HTTPException(status_code=500, detail="AI service not configured")
+
+    # The prompt instructs the model on how to analyze the image and what JSON to return.
+    # It's crucial to be specific about the desired JSON structure.
+    prompt = f"""
+    Analyze the attached image(s) of a receipt. Extract the following details
+    and return them as Array/List of JSON object:
+    - "amout": The total amount of the transaction as a float, defaulting to 0.
+    - "type": The type of transaction, which should be "expense".
+    - "detail": A brief description of the items or service.
+    - "tag": A relevant category for the expense (e.g., "food", "transportation", "groceries").
+    - "user_id": Use the provided user ID: "{user_id}".
+
+    If you cannot determine a value, use a sensible default or null.
+    The final output should be only the JSON object, with no other text or formatting.
+    """
+
+    # Combine the text prompt with the image data for the multimodal request
+    model_input = [prompt, *image_data]
+
+    try:
+        response = client.models.generate_content(
+            model="gemini-2.5-flash", contents=model_input
+        )
+        # The response text should be a JSON string. To make it more robust,
+        # we'll clean it up in case the model wraps it in markdown.
+        response_text = response.text
+        # Find the start and end of the JSON object
+        json_start = response_text.find("{")
+        json_end = response_text.rfind("}") + 1
+        json_string = response_text[json_start:json_end]
+        transactions_data = json.loads(json_string)
+        # for item in transactions_data:
+        #     item["user_id"] = user_id
+        logger.info(f"AI analysis result: {transactions_data}")
+        return transactions_data
+
+    except Exception as e:
+        logger.error(f"Error during AI analysis: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"AI analysis failed: {str(e)}")
 
 
 @ai_router.get("/")

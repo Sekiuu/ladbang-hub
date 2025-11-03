@@ -22,7 +22,7 @@ class TransactionBase(BaseModel):
     amout: float
     type: str
     detail: str
-    tag: str
+    tag: str  # income, expense
 
 
 class ResponseData(BaseModel):
