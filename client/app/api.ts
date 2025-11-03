@@ -33,7 +33,12 @@ export async function apiPost(
   payload?: unknown
 ): Promise<ResponseData | null> {
   try {
-    const response = await axios.post<ResponseData>(backendUrl + path, payload);
+    // Ensure path ends with / to avoid redirects
+    const normalizedPath = path.endsWith("/") ? path : path + "/";
+    const response = await axios.post<ResponseData>(
+      backendUrl + normalizedPath,
+      payload
+    );
     const data = response.data;
     console.log(data);
     return data;

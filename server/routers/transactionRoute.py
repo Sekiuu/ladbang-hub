@@ -24,9 +24,7 @@ async def get_records():
     try:
         records = await Transactions.all()
         logger.info(f"Successfully retrieved {len(records)} records from database")
-        return ResponseData(
-            body=records, message="Records retrieved successfully", success=True
-        )
+        return records
     except Exception as e:
         logger.error(f"Error retrieving records: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
@@ -43,9 +41,11 @@ async def create_record(record_data: TransactionCreate):
             tag=record_data.tag,
         )
         logger.info(f"Record created successfully: {record}")
-        return ResponseData(
-            body=record, message="Transaction created successfully", success=True
-        )
+        return {
+            "body": record.get(user_id=record_data.user_id),
+            "message": "Record created successfully",
+            "success": True,
+        }
     except Exception as e:
         logger.error(f"Error creating record: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
@@ -59,9 +59,11 @@ async def get_record(record_id: str):
             raise HTTPException(status_code=404, detail="Record not found")
 
         logger.info(f"Successfully retrieved record {record_id}")
-        return ResponseData(
-            body=record, message="Record retrieved successfully", success=True
-        )
+        return {
+            "body": record,
+            "message": "Record created successfully",
+            "success": True,
+        }
     except Exception as e:
         logger.error(f"Error retrieving record {record_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
@@ -82,7 +84,11 @@ async def update_record(record_id: str, record_data: TransactionBase):
             tag=record_data.tag,
         )
         logger.info(f"Successfully updated record {record_id}")
-        return record
+        return {
+            "body": record,
+            "message": "Record created successfully",
+            "success": True,
+        }
     except Exception as e:
         logger.error(f"Error updating record {record_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
@@ -97,7 +103,7 @@ async def delete_record(record_id: str):
 
         await record.delete()
         logger.info(f"Successfully deleted record {record_id}")
-        return {"message": "Record deleted successfully"}
+        return {"message": "Record deleted successfully", "success": True, "body": None}
     except Exception as e:
         logger.error(f"Error deleting record {record_id}: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
@@ -142,7 +148,11 @@ async def create_record_with_image(
             record = await Transactions.create(**item)
             records.append(record)
             logger.info(f"Record created successfully from AI data: {record.id}")
-        return records
+        return {
+            "body": records,
+            "message": "Records created successfully",
+            "success": True,
+        }
     except Exception as e:
         # This will catch errors from both the AI call and the database creation
         logger.error(f"Error creating record from image: {str(e)}")
