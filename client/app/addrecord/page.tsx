@@ -196,16 +196,16 @@ export default function Home() {
           </h2>
 
           <div className="space-y-4">
-            {transactions.map((t) => (
+            {transactions.slice().reverse().map((t) => (
               <div
                 key={t.id}
                 className="flex items-center justify-between p-4 border rounded-lg"
               >
                 <div>
-                  <p className="font-medium">{t.detail}</p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-gray-700">
                     {t.type === "income" ? "รายรับ" : "รายจ่าย"}
                   </p>
+                  <p className="font-medium text-gray-500">{t.detail}</p>
                 </div>
                 <p
                   className={`text-lg font-bold ${
