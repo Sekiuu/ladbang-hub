@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 
 export default function Navbar(): React.ReactElement {
   const [open, setOpen] = useState(false);
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
 
   return (
     <header
@@ -20,6 +20,7 @@ export default function Navbar(): React.ReactElement {
     >
       <div className="w-full">
         <div className="w-full flex h-16 items-center px-2 sm:px-4 lg:px-6">
+
           <div className="flex-1 flex items-center justify-start">
             <Link
               href="/landing"
@@ -30,20 +31,22 @@ export default function Navbar(): React.ReactElement {
             </Link>
           </div>
 
-          <div className="flex-1 flex items-center justify-center">
-            <Link
-              href="/profile"
-              className="text-lg font-semibold"
-              style={{ color: "#fff" }}
-            >
-              Profile
-            </Link>
-          </div>
+          <div className="flex items-center gap-4">
+            {session && (
+              <Link
+                href="/profile"
+                className="text-lg font-semibold"
+                style={{ color: "#fff" }}
+              >
+                Profile
+              </Link>
+            )}
 
-          <div className="flex-1 flex items-center justify-end">
-            {!session ? (<div className="hidden md:block">
-              <AuthButton />
-            </div>) : null}
+            {!session ? (
+              <div className="hidden md:block">
+                <AuthButton />
+              </div>
+            ) : null}
 
             <div className="md:hidden">
               <button
@@ -85,9 +88,11 @@ export default function Navbar(): React.ReactElement {
           className="md:hidden border-t"
           style={{ borderTopColor: "rgba(255,255,255,0.12)" }}
         >
-          {!session ? (<div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <AuthButton />
-          </div>) : null}
+          {!session ? (
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+              <AuthButton />
+            </div>
+          ) : null}
         </div>
       ) : null}
     </header>
