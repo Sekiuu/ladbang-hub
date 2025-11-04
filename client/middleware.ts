@@ -8,9 +8,13 @@ export async function middleware(req: NextRequest) {
 
   const isProtectedRoute = req.nextUrl.pathname.startsWith("/profile");
   const isHomePage = req.nextUrl.pathname === "/";
+  const isLoginPage = req.nextUrl.pathname === "/login" || req.nextUrl.pathname === "/signin";
   // ถ้าไม่มี token และกำลังจะเข้า route ที่ต้อง login
   if (!token && isProtectedRoute) {
     return NextResponse.redirect(new URL("/login", req.url));
+  }
+  if (token && isLoginPage) {
+    return NextResponse.redirect(new URL("/", req.url));
   }
   if (!token && isHomePage) {
     return NextResponse.redirect(new URL("/landing", req.url));
@@ -19,5 +23,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/profile/:path*", "/landing", "/"],
+  matcher: ["/profile/:path*", "/landing", "/","/login", "/signin"],
 };
