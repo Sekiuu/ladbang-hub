@@ -1,13 +1,17 @@
 "use client";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import ProtectedRoute from "../components/ProtectedRoute";
-
+import ButtonUI from "../components/ui/Button";
+import Balance from "../components/ui/Balance";
 export default function ProfilePage() {
   const { data: session } = useSession();
+  const router = useRouter();
 
   return (
 
       <div className="min-h-screen bg-gray-50 py-8">
+        <Balance/>
         <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-6">
             User Profile
@@ -42,7 +46,19 @@ export default function ProfilePage() {
             </div>
           </div>
         </div>
+        
+        <div className="flex-1 flex items-center justify-center mt-6">
+          <ButtonUI
+            type="button"
+            variant="primary"
+            size="md"
+            onClick={() => router.push("/addrecord")}
+            className="px-6"
+          >
+            addrecord
+          </ButtonUI>
+        </div>
       </div>
-
+      
   );
 }

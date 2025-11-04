@@ -15,7 +15,7 @@ export default async function Home() {
             Welcome back, {session.user?.name}!
           </h1>
           <p className="text-gray-600 mb-4">You are successfully logged in.</p>
-          <Link href="/profile" className="text-blue-500 hover:underline">
+          <Link href="/landing" className="text-blue-500 hover:underline">
             View Profile
           </Link>
         </div>

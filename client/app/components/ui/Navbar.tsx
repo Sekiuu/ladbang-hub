@@ -18,13 +18,23 @@ export default function Navbar(): React.ReactElement {
     >
       <div className="w-full">
         <div className="w-full flex h-16 items-center px-2 sm:px-4 lg:px-6">
-          <div className="flex-1 flex items-center">
+          <div className="flex-1 flex items-center justify-start">
             <Link
-              href="/"
+              href="/landing"
               className="text-lg font-semibold"
               style={{ color: "#fff" }}
             >
               Ladbang
+            </Link>
+          </div>
+
+          <div className="flex-1 flex items-center justify-center">
+            <Link
+              href="/profile"
+              className="text-lg font-semibold"
+              style={{ color: "#fff" }}
+            >
+              Profile
             </Link>
           </div>
 
