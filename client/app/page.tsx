@@ -8,29 +8,8 @@ export default async function Home() {
   
 
   return (
-    <div className="grid justify-center items-center h-screen bg-white text-black">
-      {session ? (
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">
-            Welcome back, {session.user?.name}!
-          </h1>
-          <p className="text-gray-600 mb-4">You are successfully logged in.</p>
-          <Link href="/landing" className="text-blue-500 hover:underline">
-            View Profile
-          </Link>
-        </div>
-      ) : (
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Welcome to Ladbang Hub</h1>
-          <p className="text-gray-600 mb-4">
-            Please log in to access your account.
-          </p>
-          <Link href="/login" className="text-blue-500 hover:underline">
-            Login
-          </Link>
-        </div>
-      )}
-      {/* <LandingPage /> */}
+    <div className="w-full grid justify-center items-center h-screen bg-white text-gray-800">
+      Dashboard
     </div>
   );
 }

@@ -46,7 +46,7 @@ export default function LoginPage() {
     }
   }, []);
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 w-full">
       <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-xl border border-gray-100">
         <form onSubmit={handleSubmit} className="space-y-6">
           <h2 className="text-3xl font-bold text-center text-purple-700 mb-6">

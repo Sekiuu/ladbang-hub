@@ -11,21 +11,16 @@ export default function Navbar(): React.ReactElement {
 
   return (
     <header
-      className="border-b"
-      style={{
-        background:
-          "linear-gradient(90deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%)",
-        color: "#ffffff",
-      }}
+      className="border-b shadow-sm bg-white flex items-center justify-center"
     >
-      <div className="w-full">
+      <div className="w-[80vw]">
         <div className="w-full flex h-16 items-center px-2 sm:px-4 lg:px-6">
 
           <div className="flex-1 flex items-center justify-start">
             <Link
               href="/landing"
-              className="text-lg font-semibold"
-              style={{ color: "#fff" }}
+              className="text-lg font-semibold text-gray-800"
+
             >
               Ladbang
             </Link>
@@ -35,8 +30,7 @@ export default function Navbar(): React.ReactElement {
             {session && (
               <Link
                 href="/profile"
-                className="text-lg font-semibold"
-                style={{ color: "#fff" }}
+                className="text-lg font-semibold text-gray-800"
               >
                 Profile
               </Link>

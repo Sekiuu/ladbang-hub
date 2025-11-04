@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import NavbarWrapper from "./components/ui/NavbarWrapper";
 import Providers from "./components/Providers";
+import VerticalNavbar from "./components/ui/VerticalNavbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,6 +25,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+
   return (
     <html lang="en">
       <body
@@ -31,7 +34,11 @@ export default function RootLayout({
       >
         <Providers>
           <NavbarWrapper />
+
+          <div className="flex ">
+          <VerticalNavbar />
           {children}
+          </div>
         </Providers>
       </body>
     </html>
