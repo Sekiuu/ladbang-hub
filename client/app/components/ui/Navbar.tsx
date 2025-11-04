@@ -3,9 +3,11 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import AuthButton from "../AuthButton";
+import { useSession } from "next-auth/react";
 
 export default function Navbar(): React.ReactElement {
   const [open, setOpen] = useState(false);
+  const { data: session, status } = useSession();
 
   return (
     <header
@@ -39,9 +41,9 @@ export default function Navbar(): React.ReactElement {
           </div>
 
           <div className="flex-1 flex items-center justify-end">
-            <div className="hidden md:block">
+            {!session ? (<div className="hidden md:block">
               <AuthButton />
-            </div>
+            </div>) : null}
 
             <div className="md:hidden">
               <button
@@ -83,9 +85,9 @@ export default function Navbar(): React.ReactElement {
           className="md:hidden border-t"
           style={{ borderTopColor: "rgba(255,255,255,0.12)" }}
         >
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          {!session ? (<div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             <AuthButton />
-          </div>
+          </div>) : null}
         </div>
       ) : null}
     </header>
