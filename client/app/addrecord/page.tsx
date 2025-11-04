@@ -101,7 +101,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen p-8 bg-white w-full">
+    <div className="min-h-screen p-8 bg-[linear-gradient(to_bottom_right,_#f472b6_-15%,_#ffffff_50%,_#c084fc_110%)] w-full">
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-lg shadow p-6 mb-8">
           <h2 className="text-2xl font-bold mb-4 text-gray-700">

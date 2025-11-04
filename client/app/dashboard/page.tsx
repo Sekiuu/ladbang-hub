@@ -39,7 +39,7 @@ const COLORS = ["#F97316", "#06B6D4", "#A78BFA", "#F43F5E", "#10B981"];
 
 export default function FinanceDashboard() {
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans">
+    <div className="min-h-screen bg-[linear-gradient(to_bottom_right,_#f472b6_-15%,_#ffffff_50%,_#c084fc_110%)] text-slate-800 font-sans">
       <div className="max-w-[1280px] mx-auto p-6">
         <div className="flex gap-6">
           {/* Sidebar */}
