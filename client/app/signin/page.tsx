@@ -64,7 +64,7 @@ export default function Page() {
   }, [from, session]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 w-full">
       <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-xl border border-gray-100">
         <form onSubmit={handleSubmit} className="space-y-6">
           <h2 className="text-3xl font-bold text-center text-purple-700 mb-6">
