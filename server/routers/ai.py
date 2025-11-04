@@ -4,6 +4,7 @@ import os
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from dotenv import load_dotenv
+from db.models import Transactions, UsersSetting
 import json
 import logging
 
@@ -78,6 +79,54 @@ async def analyze_transaction_from_image(image_data: list, user_id: str):
     except Exception as e:
         logger.error(f"Error during AI analysis: {str(e)}")
         raise HTTPException(status_code=500, detail=f"AI analysis failed: {str(e)}")
+
+
+@ai_router.get("/analyze-transaction")
+async def ai_analyze(user_id: str):
+    """
+    Analyzes text data and returns response from AI.
+    """
+    transactions = await Transactions.all().filter(user_id=user_id).values(
+        "amount",
+        "type",
+        "detail",
+        "tag",
+        "created_at")
+
+    user = await UsersSetting.get(user_id=user_id)
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if not client:
+        raise HTTPException(status_code=500, detail="AI service not configured")
+
+    if not transactions:
+        raise HTTPException(status_code=404, detail="No transactions found for analysis")
+
+    prompt = "\n".join([f"{[t['amount']]}, {t['type']}, {t['detail']}, {t['tag']}, {t['created_at']}" for t in transactions])
+
+    try:
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=f"""
+            ช่วยวิเคราะห์ข้อมูลรายรับรายจ่ายของ {user_id} 
+            และสรุปเป็นข้อแนะนำในการบริหารการเงินส่วนบุคคลให้หน่อยครับ:
+            {prompt}
+            ดูระยะเวลาของข้อมูลทั้งหมดแบบ {user.conclusion_routine} และ {user.goal_description}
+            ขอแบบละเอียดเป็นข้อๆ พร้อมเหตุผลประกอบ""",
+            config=types.GenerateContentConfig(
+                thinking_config=types.ThinkingConfig(
+                    thinking_budget=0
+                )  # Disables thinking
+            ),
+        )
+        logger.info(f"AI text analysis response: {response.text}")
+        return response.text
+
+    except Exception as e:
+        logger.error(f"Error during AI text analysis: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"AI text analysis failed: {str(e)}")
 
 
 @ai_router.get("/")
