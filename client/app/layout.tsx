@@ -25,8 +25,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
-
   return (
     <html lang="en">
       <body
@@ -34,11 +32,8 @@ export default function RootLayout({
       >
         <Providers>
           <NavbarWrapper />
-
-          <div className="flex ">
           <VerticalNavbar />
-          {children}
-          </div>
+          <div className="flex pt-16">{children}</div>
         </Providers>
       </body>
     </html>

@@ -11,7 +11,7 @@ export default function ProfilePage() {
 
   return (
 
-      <div className="min-h-screen bg-gray-50 py-8 w-full">
+      <div className="min-h-screen bg-gray-100 py-8 w-full">
         <Balance/>
         <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-6">
@@ -24,7 +24,7 @@ export default function ProfilePage() {
                 Name
               </label>
               <p className="mt-1 text-sm text-gray-900">
-                {session?.user?.name || "Not provided"}
+                {session?.user?.username || "Not provided"}
               </p>
             </div>
 
@@ -42,7 +42,7 @@ export default function ProfilePage() {
                 User ID
               </label>
               <p className="mt-1 text-sm text-gray-900">
-                {(session?.user as any)?.id || "Not available"}
+                {session?.user?.id || "Not available"}
               </p>
             </div>
           </div>

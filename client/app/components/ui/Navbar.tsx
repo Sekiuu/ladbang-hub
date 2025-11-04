@@ -11,9 +11,9 @@ export default function Navbar(): React.ReactElement {
 
   return (
     <header
-      className="border-b shadow-sm bg-white flex items-center justify-center"
+      className="border-b shadow-sm bg-white flex items-center justify-center fixed w-full z-20"
     >
-      <div className="w-[80vw]">
+      <div className="w-[94vw]">
         <div className="w-full flex h-16 items-center px-2 sm:px-4 lg:px-6">
 
           <div className="flex-1 flex items-center justify-start">
@@ -32,7 +32,7 @@ export default function Navbar(): React.ReactElement {
                 href="/profile"
                 className="text-lg font-semibold text-gray-800"
               >
-                Profile
+                   {session?.user?.username}
               </Link>
             )}
 
