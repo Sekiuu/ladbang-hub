@@ -66,7 +66,7 @@ def configure_routers(app: FastAPI):
 
 configure_routers(app)
 
-@app.get("/")
+# @app.get("/")
 @app.get("/api")
 def read_root():
     return {"message": "FastAPI is running on Vercel", "status": "ok"}
