@@ -9,7 +9,7 @@ import { UserBase } from "@/lib/schema/users";
 import BalanceCard from "./BalanceCard";
 import TransactionHistory from "./TransactionHistory";
 import AddTransactionForm from "./AddTransactionForm";
-import ButtonUI from "../components/ui/Button";
+// import ButtonUI from "../components/ui/Button";
 import GraphView from "./GraphView"; // Import the new GraphView component
 import AIChat from "./AIChat";
 import AIFinancialAnalysis from "./AIFinancialAnalysis";
