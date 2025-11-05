@@ -1,12 +1,13 @@
 from google import genai
 from google.genai import types
 import os
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, File, UploadFile, Form
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from db.models import Transactions, UsersSetting
 import json
 import logging
+import base64
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -177,3 +178,37 @@ async def ai_prompt(request: PromptRequest):
     except Exception as e:
         logger.error(f"Error processing AI prompt: {str(e)}")
         raise HTTPException(status_code=500, detail=f"AI processing error: {str(e)}")
+
+
+@ai_router.post("/analyze-receipt")
+async def analyze_receipt(
+    image: UploadFile = File(...),
+    user_id: str = Form(...)
+):
+    """
+    Upload receipt image and extract transaction data using AI
+    """
+    if not client:
+        raise HTTPException(status_code=500, detail="AI service not configured")
+
+    try:
+        # Read image file
+        image_bytes = await image.read()
+        
+        # Convert to base64 for Gemini API
+        image_data = [
+            types.Part.from_bytes(
+                data=image_bytes,
+                mime_type=image.content_type or "image/jpeg"
+            )
+        ]
+        
+        # Analyze using AI
+        transactions = await analyze_transaction_from_image(image_data, user_id)
+        
+        logger.info(f"Successfully analyzed receipt for user {user_id}")
+        return transactions
+        
+    except Exception as e:
+        logger.error(f"Error analyzing receipt: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Receipt analysis failed: {str(e)}")
