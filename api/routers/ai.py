@@ -1,10 +1,9 @@
 from google import genai
 from google.genai import types
 import os
-from fastapi import APIRouter, HTTPException, File, UploadFile, Form
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from db.models import Transactions, User
 import json
 import logging
 
@@ -81,75 +80,6 @@ async def analyze_transaction_from_image(image_data: list, user_id: str):
         raise HTTPException(status_code=500, detail=f"AI analysis failed: {str(e)}")
 
 
-@ai_router.get("/analyze-transaction")
-async def ai_analyze(user_id: str):
-    """
-    Analyzes text data and returns response from AI.
-    """
-    transactions = (
-        await Transactions.all()
-        .filter(user_id=user_id)
-        .values("amount", "type", "detail", "tag", "created_at")
-    )
-
-    user = await User.get(id=user_id)
-    logger.info(f"Successfully retrieved user {user_id}")
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    if not client:
-        raise HTTPException(status_code=500, detail="AI service not configured")
-
-    if not transactions:
-        raise HTTPException(
-            status_code=404, detail="No transactions found for analysis"
-        )
-
-    prompt = "\n".join(
-        [
-            f"{[t['amount']]}, {t['type']}, {t['detail']}, {t['tag']}, {t['created_at']}"
-            for t in transactions
-        ]
-    )
-
-    try:
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=f"""
-            วิเคราะห์ข้อมูลการเงินของ {user.username} และให้คำแนะนำการบริหารการเงินแบบสั้น ๆ
-
-ข้อมูลรายการธุรกรรม:
-{prompt}
-
-กรุณาสรุปผลในรูปแบบ Markdown โดยใช้โครงสร้างดังนี้:
-
-## 📊 สรุปการเงิน
-- ภาพรวมสั้น ๆ ของพฤติกรรมการใช้จ่าย
-
-## 💡 ข้อสังเกตสำคัญ
-- 3-5 ข้อสังเกตที่สำคัญ
-
-## ✅ คำแนะนำ
-- 3-5 คำแนะนำที่นำไปใช้ได้จริง
-
-เน้นความกระชับและเป็นมืออาชีพ ใช้อีโมจิน้อย ๆ มุ่งไปที่ข้อมูลที่สำคัญที่สุดเท่านั้น
-            """,
-            config=types.GenerateContentConfig(
-                thinking_config=types.ThinkingConfig(
-                    thinking_budget=0
-                )  # Disables thinking
-            ),
-        )
-        logger.info(f"AI text analysis response: {response.text}")
-        return response.text
-
-    except Exception as e:
-        logger.error(f"Error during AI text analysis: {str(e)}")
-        raise HTTPException(
-            status_code=500, detail=f"AI text analysis failed: {str(e)}"
-        )
-
-
 @ai_router.get("/")
 async def ai_root():
     """AI service root endpoint"""
@@ -198,35 +128,3 @@ async def ai_prompt(request: PromptRequest):
     except Exception as e:
         logger.error(f"Error processing AI prompt: {str(e)}")
         raise HTTPException(status_code=500, detail=f"AI processing error: {str(e)}")
-
-
-@ai_router.post("/analyze-receipt")
-async def analyze_receipt(image: UploadFile = File(...), user_id: str = Form(...)):
-    """
-    Upload receipt image and extract transaction data using AI
-    """
-    if not client:
-        raise HTTPException(status_code=500, detail="AI service not configured")
-
-    try:
-        # Read image file
-        image_bytes = await image.read()
-
-        # Convert to base64 for Gemini API
-        image_data = [
-            types.Part.from_bytes(
-                data=image_bytes, mime_type=image.content_type or "image/jpeg"
-            )
-        ]
-
-        # Analyze using AI
-        transactions = await analyze_transaction_from_image(image_data, user_id)
-
-        logger.info(f"Successfully analyzed receipt for user {user_id}")
-        return transactions
-
-    except Exception as e:
-        logger.error(f"Error analyzing receipt: {str(e)}")
-        raise HTTPException(
-            status_code=500, detail=f"Receipt analysis failed: {str(e)}"
-        )

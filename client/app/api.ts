@@ -6,7 +6,9 @@ export type ResponseData = {
   success: boolean;
 };
 
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "/api";
+const backendUrl =
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+console.log("heheha: " + backendUrl);
 // Simple, typed GET helper with optional query params
 export async function apiGet(
   path: string,
@@ -16,10 +18,12 @@ export async function apiGet(
     const response = await axios.get<ResponseData>(backendUrl + path, {
       params,
     });
-    return response.data;
+    const data = response.data;
+    console.log(data);
+    return data;
   } catch (error) {
     console.error(error);
-    throw error; // Re-throw the error to be handled by the caller
+    return null;
   }
 }
 
@@ -35,10 +39,12 @@ export async function apiPost(
       backendUrl + normalizedPath,
       payload
     );
-    return response.data;
+    const data = response.data;
+    console.log(data);
+    return data;
   } catch (error) {
     console.error(error);
-    throw error; // Re-throw the error to be handled by the caller
+    return null;
   }
 }
 

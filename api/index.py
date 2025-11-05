@@ -1,17 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
+import uvicorn
 import logging
-from mangum import Mangum
-
-# Set up paths to import from server directory
-import sys
-from pathlib import Path
-
-# Add server directory to Python path
-server_path = Path(__file__).parent.parent / "server"
-sys.path.insert(0, str(server_path))
-
 from db.main import connect_to_db
 from dotenv import load_dotenv
 
@@ -22,9 +13,14 @@ from routers import ai_router, user_router, transaction_router, usersetting_rout
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+items = []
+
+
 app = FastAPI()
 
-# CORS configuration
+
+# CORS for local development: allow frontend origins and POST/GET, etc.
+
 load_dotenv()
 
 frontend_env = os.getenv("FRONTEND_URL")
@@ -34,13 +30,8 @@ if frontend_env:
         o.strip().strip("'").strip('"') for o in _stripped.split(",") if o.strip()
     ]
 else:
-    # Default to Vercel frontend
-    origins = [
-        "https://*.vercel.app",
-        "http://localhost:3000",
-        "https://ladbang-hub.vercel.app"
-    ]
-
+    # Default to localhost for development
+    origins = ["http://localhost:3000"]
 logger.info(f"CORS origins configured: {origins}")
 app.add_middleware(
     CORSMiddleware,
@@ -53,27 +44,38 @@ app.add_middleware(
 # db connect
 connect_to_db(app=app)
 
-# Configure routers
+
+# Include routers with proper prefixes and tags
 def configure_routers(app: FastAPI):
     """Include routers with proper prefixes and tags."""
+    # you can add more routers here
     app.include_router(user_router, prefix="/users", tags=["Users"])
     app.include_router(transaction_router, prefix="/transactions")
     app.include_router(usersetting_router, prefix="/usersettings")
     app.include_router(ai_router, prefix="/ai", tags=["AI"])
-    
+
+    # Print configured routes
     logger.info(
         f"routes configured : \n" + "\n".join([f"   {i}" for i in app.routes])
-    )
+    )  # app.routes
+
 
 configure_routers(app)
+
 
 @app.get("/")
 def read_root():
     return {"message": "Hello, world!"}
 
-@app.get("/api")
-def api_root():
-    return {"message": "API is running on Vercel"}
 
-# Mangum handler for Vercel
-handler = Mangum(app)
+if __name__ == "__index__":
+    """
+    This is the main entry point of the application. It starts the Uvicorn server
+    on port 8000 and prints a message to the console.
+    """
+
+    PORT = int(os.getenv("PORT", 8000))
+    config = uvicorn.Config(app=app, port=PORT)
+    server = uvicorn.Server(config)
+    server.run()
+    # uvicorn.run(app=app, port=8000)
