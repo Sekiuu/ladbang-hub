@@ -131,7 +131,7 @@ export default function Dashboard() {
         }
         
         await loadTransactions();
-        alert(`✅ บันทึก ${results.length} รายการเรียบร้อยแล้ว!`);
+ 
       }
     } catch (err) {
       console.error("Image analysis error:", err);
