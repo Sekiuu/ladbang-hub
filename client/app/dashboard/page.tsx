@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, use } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { api } from "../api";
 import { UserBase } from "@/lib/schema/users";
@@ -75,13 +75,17 @@ export default function Dashboard() {
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-light text-slate-700">{Pages[currentPage].toUpperCase()}</h1>
+              <h1 className="text-3xl font-light text-slate-700">
+                {Pages[currentPage].toUpperCase()}
+              </h1>
               {currentPage === 0 && (
                 <div className="flex items-center gap-4 mt-2">
                   <p className="text-slate-500 text-sm">Overview</p>
                   <select
                     value={view}
-                    onChange={(e) => setView(e.target.value as "default" | "graph")}
+                    onChange={(e) =>
+                      setView(e.target.value as "default" | "graph")
+                    }
                     className="text-slate-600 px-3 py-1 border border-sky-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-300 bg-white font-light text-sm"
                   >
                     <option value="default">Default</option>
@@ -96,10 +100,22 @@ export default function Dashboard() {
               }}
               className="inline-flex items-center gap-2 bg-gradient-to-r from-sky-500 to-cyan-500 text-white px-6 py-3 rounded-xl hover:from-sky-600 hover:to-cyan-600 transition font-light shadow-sm"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+                />
               </svg>
-              <span className="text-base">Switch to {Pages[(currentPage + 1) % 2]}</span>
+              <span className="text-base">
+                Switch to {Pages[(currentPage + 1) % 2]}
+              </span>
             </button>
           </div>
         </div>
