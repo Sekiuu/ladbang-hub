@@ -96,6 +96,8 @@ export default function GraphView({ transactions }: GraphViewProps) {
             Transaction Trends
           </h2>
           <select
+            name="timeframe"
+            title="Timeframe"
             value={timeframe}
             onChange={(e) => setTimeframe(e.target.value)}
             className="px-3 py-2 text-slate-700 border border-sky-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-300 bg-white font-light text-sm"
@@ -185,7 +187,7 @@ export default function GraphView({ transactions }: GraphViewProps) {
                   dataKey="value"
                   nameKey="name"
                   label={({ name, percent }) =>
-                    `${name} ${(percent * 100).toFixed(0)}%`
+                    `${name} ${((percent as number) * 100).toFixed(0)}%`
                   }
                 >
                   {pieChartData.map((entry, index) => (

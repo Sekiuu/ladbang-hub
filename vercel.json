@@ -2,22 +2,28 @@
   "version": 2,
   "builds": [
     {
-      "src": "server/main.py",
+      "src": "api/index.py",
       "use": "@vercel/python",
-      "config": { "maxLambdaSize": "15mb", "runtime": "python3.11" }
+      "config": {
+        "maxLambdaSize": "15mb"
+      }
     },
     {
-      "src": "client/next.config.mjs",
-      "use": "@vercel/next",
-      "config": { "maxLambdaSize": "15mb" }
+      "src": "client/package.json",
+      "use": "@vercel/next"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/server/main.py"
+      "dest": "api/index.py"
     },
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/client" }
-  ]
+    {
+      "src": "/(.*)",
+      "dest": "client/$1"
+    }
+  ],
+  "env": {
+    "PYTHON_VERSION": "3.11"
+  }
 }

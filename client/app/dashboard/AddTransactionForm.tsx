@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import { api } from "@/app/api";
-import { analyzeReceiptImage } from "@/lib/ai-api";
+// import { analyzeReceiptImage } from "@/lib/ai-api";
 import {
   Plus,
   Edit3,

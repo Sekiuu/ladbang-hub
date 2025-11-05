@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import ButtonUI from "../components/ui/Button";
 import { signIn, useSession } from "next-auth/react";
@@ -8,6 +9,14 @@ import Link from "next/link";
 import { api } from "../api";
 
 export default function Page() {
+  return (
+    <Suspense>
+      <SignInForm />
+    </Suspense>
+  );
+}
+
+function SignInForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
