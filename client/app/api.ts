@@ -18,12 +18,10 @@ export async function apiGet(
     const response = await axios.get<ResponseData>(backendUrl + path, {
       params,
     });
-    const data = response.data;
-    console.log(data);
-    return data;
+    return response.data;
   } catch (error) {
     console.error(error);
-    return null;
+    throw error; // Re-throw the error to be handled by the caller
   }
 }
 
@@ -39,12 +37,10 @@ export async function apiPost(
       backendUrl + normalizedPath,
       payload
     );
-    const data = response.data;
-    console.log(data);
-    return data;
+    return response.data;
   } catch (error) {
     console.error(error);
-    return null;
+    throw error; // Re-throw the error to be handled by the caller
   }
 }
 

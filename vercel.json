@@ -1,21 +1,23 @@
 {
   "version": 2,
   "builds": [
-    { "src": "*.html", "use": "@vercel/static" },
-    { "src": "*.py", "use": "@vercel/python" },
-    { "src": "*.js", "use": "@vercel/node" }
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python",
+      "config": { "maxLambdaSize": "15mb", "runtime": "python3.11" }
+    },
+    {
+      "src": "client/next.config.mjs",
+      "use": "@vercel/next",
+      "config": { "maxLambdaSize": "15mb" }
+    }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
       "dest": "/api/index.py"
     },
-    {
-      "src": "/(.*)",
-      "dest": "/client/$1"
-    }
-  ],
-  "env": {
-    "PYTHON_VERSION": "3.11"
-  }
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/client" }
+  ]
 }
