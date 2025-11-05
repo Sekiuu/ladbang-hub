@@ -10,3 +10,4 @@ tortoise-orm
 pillow
 python-multipart
 fastapi-cors
+mangum
