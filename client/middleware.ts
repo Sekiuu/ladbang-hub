@@ -6,7 +6,7 @@ import { getToken } from "next-auth/jwt";
 export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-  const isProtectedRoute = req.nextUrl.pathname.startsWith("/profile");
+  const isProtectedRoute = req.nextUrl.pathname.startsWith("/profile") || req.nextUrl.pathname.startsWith("/dashboard");
   const isHomePage = req.nextUrl.pathname === "/";
   const isLandingPage = req.nextUrl.pathname === "/landing";
   const isLoginPage =
@@ -21,12 +21,12 @@ export async function middleware(req: NextRequest) {
   if (!token && isHomePage) {
     return NextResponse.redirect(new URL("/landing", req.url));
   }
-  if (token && isLandingPage) {
-    return NextResponse.redirect(new URL("/", req.url));
-  }
+  // if (token && isLandingPage) {
+  //   return NextResponse.redirect(new URL("/", req.url));
+  // }
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/profile/:path*", "/landing", "/", "/login", "/signin"],
+  matcher: ["/profile/:path*", "/landing", "/", "/login", "/signin", "/dashboard/:path*"],
 };

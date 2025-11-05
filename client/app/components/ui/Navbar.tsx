@@ -4,21 +4,25 @@ import React, { useState } from "react";
 import Link from "next/link";
 import AuthButton from "../AuthButton";
 import { useSession } from "next-auth/react";
+import { HiMenu, HiX } from "react-icons/hi";
+import { FaWallet } from "react-icons/fa";
+import { User } from "lucide-react";
 
 export default function Navbar(): React.ReactElement {
   const [open, setOpen] = useState(false);
   const { data: session } = useSession();
 
   return (
-    <header className="border-b shadow-sm bg-white flex items-center justify-center fixed w-full z-20">
+    <header className="border-b border-sky-100 shadow-sm bg-white/100 flex items-center justify-center fixed w-full z-20">
       <div className="w-[94vw]">
         <div className="w-full flex h-16 items-center px-2 sm:px-4 lg:px-6">
           <div className="flex-1 flex items-center justify-start">
             <Link
               href="/landing"
-              className="text-lg font-semibold text-gray-800"
+              className="flex items-center gap-2 text-xl font-light text-slate-700 hover:text-sky-600 transition"
             >
-              Ladbang
+              <FaWallet className="w-5 h-5 text-sky-500" />
+              <span>Ladbang</span>
             </Link>
           </div>
 
@@ -26,9 +30,10 @@ export default function Navbar(): React.ReactElement {
             {session && (
               <Link
                 href="/profile"
-                className="text-lg font-semibold text-gray-800"
+                className="flex items-center gap-2 text-base font-light text-slate-700 hover:text-sky-600 transition"
               >
-                {session?.user?.username}
+                <User className="w-4 h-4" />
+                <span>{session?.user?.username}</span>
               </Link>
             )}
 
@@ -42,30 +47,13 @@ export default function Navbar(): React.ReactElement {
               <button
                 onClick={() => setOpen((v) => !v)}
                 aria-label="Toggle menu"
-                className="inline-flex items-center justify-center p-2 rounded-md text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-offset-2"
+                className="inline-flex items-center justify-center p-2 rounded-xl text-slate-700 hover:bg-sky-50 focus:outline-none focus:ring-2 focus:ring-sky-300"
               >
-                <svg
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  {open ? (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  ) : (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  )}
-                </svg>
+                {open ? (
+                  <HiX className="h-6 w-6" />
+                ) : (
+                  <HiMenu className="h-6 w-6" />
+                )}
               </button>
             </div>
           </div>
@@ -74,10 +62,7 @@ export default function Navbar(): React.ReactElement {
 
       {/* Mobile menu */}
       {open ? (
-        <div
-          className="md:hidden border-t"
-          style={{ borderTopColor: "rgba(255,255,255,0.12)" }}
-        >
+        <div className="md:hidden border-t border-sky-100 bg-white/100">
           {!session ? (
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
               <AuthButton />

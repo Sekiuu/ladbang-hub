@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { api } from "../api";
+import { Zap, Shield, Users, ArrowRight, User, LayoutDashboard, Sparkles } from "lucide-react";
 
 export default function LandingPage() {
   const { data: session, status } = useSession();
@@ -26,44 +27,44 @@ export default function LandingPage() {
   // }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 w-full">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 via-blue-50 to-cyan-50 w-full">
       {/* Hero Section */}
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-12">
         <div className="text-center">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
+          <h1 className="text-6xl font-light text-slate-700 mb-4">
             Welcome to{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent font-normal">
               Ladbang Hub
             </span>
           </h1>
 
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Your all-in-one platform for productivity, collaboration, and
-            growth. Join thousands of users who are already transforming their
-            workflow.
+          <p className="text-xl text-slate-500 mb-8 max-w-2xl mx-auto font-light">
+            Smart financial management powered by AI
           </p>
 
           {session ? (
             <div className="space-y-4">
-              <div className="bg-green-50 border border-green-200 rounded-lg p-6 max-w-md mx-auto">
-                <h2 className="text-2xl font-semibold text-green-800 mb-2">
-                  Welcome back, {session.user?.name}!
+              <div className="bg-white/80 backdrop-blur-sm border border-sky-100 rounded-2xl p-6 max-w-md mx-auto shadow-sm">
+                <h2 className="text-2xl font-light text-slate-700 mb-1">
+                  Hey, {session.user?.name}!
                 </h2>
-                <p className="text-green-600 mb-4">
-                  You're successfully logged in and ready to go.
+                <p className="text-slate-500 mb-4 font-light">
+                  Ready to manage your finances?
                 </p>
-                <div className="space-x-4">
+                <div className="flex gap-3 justify-center">
                   <Link
-                    href="/profile"
-                    className="inline-block bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition"
+                    href="/dashboard"
+                    className="inline-flex items-center gap-2 bg-sky-500 text-white px-6 py-3 rounded-xl hover:bg-sky-600 transition font-light shadow-sm"
                   >
-                    View Profile
+                    <LayoutDashboard className="w-4 h-4" />
+                    Dashboard
                   </Link>
                   <Link
-                    href="/addrecord"
-                    className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+                    href="/profile"
+                    className="inline-flex items-center gap-2 bg-white text-slate-700 px-6 py-3 rounded-xl hover:bg-sky-50 transition font-light border border-sky-100"
                   >
-                    Get Start
+                    <User className="w-4 h-4" />
+                    Profile
                   </Link>
                 </div>
               </div>
@@ -73,13 +74,14 @@ export default function LandingPage() {
               <div className="space-x-4">
                 <Link
                   href="/login"
-                  className="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+                  className="inline-flex items-center gap-2 bg-sky-500 text-white px-8 py-4 rounded-xl font-light hover:bg-sky-600 transition shadow-sm"
                 >
                   Get Started
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
-              <p className="text-sm text-gray-500">
-                Demo credentials: admin@example.com / password
+              <p className="text-sm text-slate-400 font-light">
+                Demo: admin@example.com / password
               </p>
             </div>
           )}
@@ -87,87 +89,50 @@ export default function LandingPage() {
       </div>
 
       {/* Features Section */}
-      <div className="container mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Why Choose Ladbang Hub?
+      <div className="container mx-auto px-4 py-12">
+        <div className="text-center mb-10">
+          <h2 className="text-4xl font-light text-slate-700 mb-3">
+            Why Ladbang Hub?
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Discover the features that make us the preferred choice for teams
-            and individuals.
+          <p className="text-slate-500 max-w-2xl mx-auto font-light">
+            Built for people who want to take control of their money
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
-            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-              <svg
-                className="w-6 h-6 text-blue-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                />
-              </svg>
+        <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl border border-sky-100 shadow-sm hover:shadow-md transition">
+            <div className="w-14 h-14 bg-gradient-to-br from-sky-400 to-cyan-400 rounded-xl flex items-center justify-center mb-4">
+              <Zap className="w-7 h-7 text-white" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              Lightning Fast
+            <h3 className="text-xl font-light text-slate-700 mb-2">
+              Fast & Simple
             </h3>
-            <p className="text-gray-600">
-              Built with modern technology for optimal performance and speed.
+            <p className="text-slate-500 font-light leading-relaxed">
+              Track your spending in seconds, not minutes
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
-            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-              <svg
-                className="w-6 h-6 text-green-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+          <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl border border-sky-100 shadow-sm hover:shadow-md transition">
+            <div className="w-14 h-14 bg-gradient-to-br from-emerald-400 to-green-400 rounded-xl flex items-center justify-center mb-4">
+              <Shield className="w-7 h-7 text-white" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              Secure & Reliable
+            <h3 className="text-xl font-light text-slate-700 mb-2">
+              Safe & Private
             </h3>
-            <p className="text-gray-600">
-              Enterprise-grade security with 99.9% uptime guarantee.
+            <p className="text-slate-500 font-light leading-relaxed">
+              Your data stays secure with enterprise-grade protection
             </p>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition">
-            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-              <svg
-                className="w-6 h-6 text-purple-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                />
-              </svg>
+          <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl border border-sky-100 shadow-sm hover:shadow-md transition">
+            <div className="w-14 h-14 bg-gradient-to-br from-sky-400 to-blue-400 rounded-xl flex items-center justify-center mb-4">
+              <Sparkles className="w-7 h-7 text-white" />
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              Team Collaboration
+            <h3 className="text-xl font-light text-slate-700 mb-2">
+              AI Insights
             </h3>
-            <p className="text-gray-600">
-              Work together seamlessly with real-time collaboration tools.
+            <p className="text-slate-500 font-light leading-relaxed">
+              Get personalized tips to save more and spend smarter
             </p>
           </div>
         </div>
@@ -175,20 +140,20 @@ export default function LandingPage() {
 
       {/* CTA Section */}
       {!session && (
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 py-16">
+        <div className="bg-gradient-to-r from-sky-400 to-cyan-400 py-16">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold text-white mb-4">
-              Ready to Get Started?
+            <h2 className="text-4xl font-light text-white mb-3">
+              Ready to take control?
             </h2>
-            <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
-              Join thousands of users who are already transforming their
-              workflow with Ladbang Hub.
+            <p className="text-sky-50 mb-8 max-w-2xl mx-auto font-light">
+              Join thousands who've transformed how they manage money
             </p>
             <Link
               href="/login"
-              className="inline-block bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
+              className="inline-flex items-center gap-2 bg-white text-sky-600 px-8 py-4 rounded-xl font-light hover:bg-sky-50 transition shadow-sm"
             >
-              Start Your Journey
+              Start Now
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
