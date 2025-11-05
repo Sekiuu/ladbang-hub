@@ -119,7 +119,7 @@ async def ai_analyze(user_id: str):
             ช่วยวิเคราะห์ข้อมูลรายรับรายจ่ายของ {user_id} 
             และสรุปเป็นข้อแนะนำในการบริหารการเงินส่วนบุคคลให้หน่อยครับ:
             {prompt}
-            ดูระยะเวลาของข้อมูลทั้งหมดแบบ {user.conclusion_routine} และ {user.goal_description}
+            ดูระยะเวลาของข้อมูลทั้งหมดแบบ monthly และ weekly และ ให้คำวิจาร์ณเรื่องสุขภาพการเงินและพฤติกรรมการเงิน 
             ขอแบบละเอียดเป็นข้อๆ พร้อมเหตุผลประกอบ""",
             config=types.GenerateContentConfig(
                 thinking_config=types.ThinkingConfig(
