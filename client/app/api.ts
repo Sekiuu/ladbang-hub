@@ -6,8 +6,7 @@ export type ResponseData = {
   success: boolean;
 };
 
-const backendUrl =
-  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "/api";
 console.log("heheha: " + backendUrl);
 // Simple, typed GET helper with optional query params
 export async function apiGet(
