@@ -1,7 +1,6 @@
 import { api } from "@/app/api";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import GoogleProvider from "next-auth/providers/google";
 import { UserBase } from "./schema/users";
 
 export const authOptions: NextAuthOptions = {
@@ -32,17 +31,6 @@ export const authOptions: NextAuthOptions = {
         }
 
         return null;
-      },
-    }),
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-      authorization: {
-        params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code",
-        },
       },
     }),
   ],
