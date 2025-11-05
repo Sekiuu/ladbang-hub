@@ -15,6 +15,7 @@ function VerticalNavbar() {
       <Link href="/" className='hover:bg-blue-500 px-4 py-1 rounded-md duration-200'>Home</Link>
       <Link href="/profile"  className='hover:bg-blue-500 px-4 py-1 rounded-md duration-200'>Profile</Link>
       <Link href="/addrecord" className='hover:bg-blue-500 px-4 py-1 rounded-md duration-200'>Add Record</Link>
+      <Link href="/ai" className='hover:bg-blue-500 px-4 py-1 rounded-md duration-200'>🤖 AI Assistant</Link>
       </div>
     </div>
   )
