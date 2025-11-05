@@ -1,29 +1,17 @@
 {
+  "buildCommand": "cd client && npm install && npm run build",
+  "outputDirectory": "client/.next",
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/server/main.py"
+      "source": "/api/:path*",
+      "destination": "/api"
     }
   ],
   "functions": {
-    "server/api.py": {
-      "runtime": "python3.13",
+    "server/main.py": {
+      "runtime": "python3.9",
       "maxDuration": 60,
       "memory": 1024
     }
-  },
-  "builds": [
-    {
-      "src": "client/package.json",
-      "use": "@vercel/next"
-    },
-    {
-      "src": "server/main.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "15mb",
-        "runtime": "python3.9"
-      }
-    }
-  ]
+  }
 }
