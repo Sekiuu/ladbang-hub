@@ -16,6 +16,8 @@
     {
       "src": "/api/(.*)",
       "dest": "/server/main.py"
-    }
+    },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/client" }
   ]
 }
