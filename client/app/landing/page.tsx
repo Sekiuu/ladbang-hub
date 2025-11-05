@@ -7,15 +7,15 @@ import { api } from "../api";
 export default function LandingPage() {
   const { data: session, status } = useSession();
 
-  const testApi = async () => {
-    const res = await api.get("/users");
-    if (res?.body) {
-      console.log(JSON.stringify(res.body, null, 2));
-    } else {
-      console.log(res);
-    }
-  };
-  testApi();
+  // const testApi = async () => {
+  //   const res = await api.get("/users");
+  //   if (res?.body) {
+  //     console.log(JSON.stringify(res.body, null, 2));
+  //   } else {
+  //     console.log(res);
+  //   }
+  // };
+  // testApi();
 
   // if (status === "loading") {
   //   return (
@@ -77,7 +77,6 @@ export default function LandingPage() {
                 >
                   Get Started
                 </Link>
-                
               </div>
               <p className="text-sm text-gray-500">
                 Demo credentials: admin@example.com / password
