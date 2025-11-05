@@ -1,4 +1,6 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+// AI API wrapper functions for Next.js client
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
 
 export interface PromptRequest {
   prompt: string;
@@ -17,6 +19,9 @@ export interface TransactionData {
   user_id: string;
 }
 
+/**
+ * Test AI service connection
+ */
 export async function testAIService(): Promise<{ message: string; body: string; success: boolean }> {
   const response = await fetch(`${API_BASE_URL}/ai/`);
   if (!response.ok) {
@@ -25,6 +30,9 @@ export async function testAIService(): Promise<{ message: string; body: string; 
   return response.json();
 }
 
+/**
+ * Send a prompt to AI and get response
+ */
 export async function sendPromptToAI(prompt: string): Promise<string> {
   const response = await fetch(`${API_BASE_URL}/ai/prompt`, {
     method: "POST",
@@ -42,15 +50,24 @@ export async function sendPromptToAI(prompt: string): Promise<string> {
   return data.message;
 }
 
-
+/**
+ * Get AI analysis of user's transactions
+ */
 export async function analyzeUserTransactions(userId: string): Promise<string> {
-  const response = await fetch(`${API_BASE_URL}/ai/analyze-transaction?user_id=${userId}`);
-  
-  if (!response.ok) {
-    throw new Error(`Transaction analysis failed: ${response.statusText}`);
-  }
+  try {
+    const response = await fetch(`${API_BASE_URL}/ai/analyze-transaction?user_id=${userId}`);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Analysis error:', errorText);
+      throw new Error(`Transaction analysis failed: ${response.statusText} - ${errorText}`);
+    }
 
-  return response.text();
+    return response.text();
+  } catch (error) {
+    console.error('Error analyzing transactions:', error);
+    throw error;
+  }
 }
 
 export async function analyzeReceiptImage(

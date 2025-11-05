@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { sendPromptToAI } from "@/lib/ai-api";
+import { api } from "@/app/api";
 
 interface Message {
   role: "user" | "ai";
@@ -9,10 +11,45 @@ interface Message {
   timestamp: Date;
 }
 
+interface Transaction {
+  id: string;
+  amount: number;
+  type: string;
+  detail: string;
+  tag: string;
+  created_at: string;
+}
+
 export default function AIChat() {
+  const { data: session } = useSession();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loadingTransactions, setLoadingTransactions] = useState(false);
+
+  // ดึงข้อมูล transactions เมื่อ component mount
+  useEffect(() => {
+    if (session?.user?.id) {
+      loadTransactions();
+    }
+  }, [session?.user?.id]);
+
+  const loadTransactions = async () => {
+    if (!session?.user?.id) return;
+    
+    setLoadingTransactions(true);
+    try {
+      const response = await api.get(`/transactions/user/${session.user.id}`);
+      if (response?.success && response.body) {
+        setTransactions(response.body.slice(0, 20)); // เอา 20 รายการล่าสุด
+      }
+    } catch (error) {
+      console.error("Error loading transactions:", error);
+    } finally {
+      setLoadingTransactions(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,7 +66,18 @@ export default function AIChat() {
     setLoading(true);
 
     try {
-      const response = await sendPromptToAI(userMessage.content);
+      // สร้าง context จากประวัติ transactions
+      let contextPrompt = userMessage.content;
+      
+      if (transactions.length > 0) {
+        const transactionSummary = transactions
+          .map(t => `- ${t.detail}: ${t.amount} บาท (${t.tag}) - ${new Date(t.created_at).toLocaleDateString('th-TH')}`)
+          .join('\n');
+        
+        contextPrompt = `ข้อมูลประวัติรายรับรายจ่ายของฉัน (${transactions.length} รายการล่าสุด):\n${transactionSummary}\n\nคำถาม: ${userMessage.content}\n\nกรุณาให้คำแนะนำโดยอ้างอิงจากข้อมูลประวัติการใช้จ่ายของฉันด้วย`;
+      }
+
+      const response = await sendPromptToAI(contextPrompt);
       const aiMessage: Message = {
         role: "ai",
         content: response,
@@ -50,10 +98,10 @@ export default function AIChat() {
   };
 
   const suggestedQuestions = [
-    "สอนการวางแผนการเงินหน่อย",
-    "วิธีประหยัดเงินมีอะไรบ้าง",
-    "แนะนำการจัดการหนี้สิน",
-    "ควรออมเงินอย่างไรให้ได้ผล",
+    "วิเคราะห์การใช้จ่ายของฉันหน่อย",
+    "ฉันควรลดค่าใช้จ่ายตรงไหน",
+    "แนะนำวิธีประหยัดเงินตามข้อมูลของฉัน",
+    "ช่วยวิเคราะห์พฤติกรรมการใช้เงินของฉัน",
   ];
 
   return (
@@ -61,14 +109,26 @@ export default function AIChat() {
       {/* Header */}
       <div className="p-4 border-b bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-t-lg">
         <h2 className="text-xl font-bold">💬 AI Financial Advisor</h2>
-        <p className="text-sm opacity-90">ถามคำถามเกี่ยวกับการเงินได้เลย</p>
+        <p className="text-sm opacity-90">
+          ถามคำถามเกี่ยวกับการเงินได้เลย {transactions.length > 0 && `(มีข้อมูล ${transactions.length} รายการ)`}
+        </p>
+        {loadingTransactions && (
+          <p className="text-xs opacity-75 mt-1">กำลังโหลดข้อมูล...</p>
+        )}
       </div>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-[400px] max-h-[600px]">
         {messages.length === 0 ? (
           <div className="text-center text-gray-500 mt-8">
-            <p className="text-lg mb-4">🤖 สวัสดีครับ! มีอะไรให้ช่วยไหมครับ?</p>
+            <p className="text-lg mb-4">
+              🤖 สวัสดีครับ! มีอะไรให้ช่วยไหมครับ?
+              {transactions.length > 0 && (
+                <span className="block text-sm text-green-600 mt-2">
+                  ✅ ระบบโหลดข้อมูลรายรับรายจ่าย {transactions.length} รายการแล้ว
+                </span>
+              )}
+            </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-4">
               {suggestedQuestions.map((question, idx) => (
                 <button

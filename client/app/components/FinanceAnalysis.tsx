@@ -1,14 +1,50 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { analyzeUserTransactions } from "@/lib/ai-api";
+import { api } from "@/app/api";
+import { UserBase } from "@/lib/schema/users";
+
+interface Transaction {
+  id: string;
+  amount: number;
+  type: string;
+  detail: string;
+  tag: string;
+  created_at: string;
+}
 
 export default function FinanceAnalysis() {
   const { data: session } = useSession();
   const [analysis, setAnalysis] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loadingTransactions, setLoadingTransactions] = useState(false);
+
+  // ดึงข้อมูล transactions เมื่อ component โหลด
+  useEffect(() => {
+    const loadTransactions = async () => {
+      if (!session?.user?.id) return;
+
+      setLoadingTransactions(true);
+      try {
+        const response = await api.get(
+          `/transactions/user/${(session?.user as UserBase)?.id}`
+        );
+        if (response?.success) {
+          setTransactions(response.body || []);
+        }
+      } catch (err) {
+        setError("ไม่สามารถโหลดข้อมูลธุรกรรมได้");
+      } finally {
+        setLoadingTransactions(false);
+      }
+    };
+
+    loadTransactions();
+  }, [session?.user?.id]);
 
   const handleAnalyze = async () => {
     if (!session?.user?.id) {
@@ -31,6 +67,18 @@ export default function FinanceAnalysis() {
     }
   };
 
+  const getTransactionSummary = () => {
+    const income = transactions
+      .filter((t) => t.type === "income")
+      .reduce((sum, t) => sum + t.amount, 0);
+    const expense = transactions
+      .filter((t) => t.type === "expense")
+      .reduce((sum, t) => sum + t.amount, 0);
+    return { income, expense, balance: income - expense };
+  };
+
+  const summary = getTransactionSummary();
+
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       {/* Header */}
@@ -47,7 +95,7 @@ export default function FinanceAnalysis() {
       <div className="mb-6">
         <button
           onClick={handleAnalyze}
-          disabled={loading || !session?.user?.id}
+          disabled={loading || !session?.user?.id || transactions.length === 0}
           className="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white font-semibold rounded-lg hover:from-green-600 hover:to-blue-600 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed transition shadow-md"
         >
           {loading ? (
@@ -77,12 +125,76 @@ export default function FinanceAnalysis() {
             "🔍 เริ่มวิเคราะห์"
           )}
         </button>
+        {transactions.length === 0 && !loadingTransactions && (
+          <p className="text-sm text-orange-600 mt-2">
+            ⚠️ ไม่พบข้อมูล transactions กรุณาเพิ่มรายการก่อนวิเคราะห์
+          </p>
+        )}
       </div>
 
       {/* Error Message */}
       {error && (
         <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
           <p className="text-red-600">❌ {error}</p>
+        </div>
+      )}
+
+      {/* Transaction Summary */}
+      {transactions.length > 0 && (
+        <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+            <p className="text-sm text-gray-600 mb-1">รายรับ</p>
+            <p className="text-2xl font-bold text-green-600">
+              +{summary.income.toLocaleString()} ฿
+            </p>
+          </div>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <p className="text-sm text-gray-600 mb-1">รายจ่าย</p>
+            <p className="text-2xl font-bold text-red-600">
+              -{summary.expense.toLocaleString()} ฿
+            </p>
+          </div>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <p className="text-sm text-gray-600 mb-1">คงเหลือ</p>
+            <p className={`text-2xl font-bold ${summary.balance >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
+              {summary.balance >= 0 ? '+' : ''}{summary.balance.toLocaleString()} ฿
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Recent Transactions */}
+      {transactions.length > 0 && !analysis && (
+        <div className="mb-6">
+          <h3 className="text-lg font-bold text-gray-800 mb-3">
+            📝 รายการล่าสุด ({transactions.length} รายการ)
+          </h3>
+          <div className="space-y-2 max-h-64 overflow-y-auto">
+            {transactions.slice(0, 5).map((transaction) => (
+              <div
+                key={transaction.id}
+                className="bg-gray-50 p-3 rounded-lg border border-gray-200 flex justify-between items-center"
+              >
+                <div className="flex-1">
+                  <p className="font-semibold text-gray-800">{transaction.detail}</p>
+                  <p className="text-xs text-gray-500">
+                    {new Date(transaction.created_at).toLocaleDateString('th-TH')} • 
+                    <span className="text-blue-600 ml-1">{transaction.tag}</span>
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className={`text-lg font-bold ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                    {transaction.type === 'income' ? '+' : '-'}{transaction.amount.toFixed(2)} ฿
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+          {transactions.length > 5 && (
+            <p className="text-sm text-gray-500 text-center mt-2">
+              และอีก {transactions.length - 5} รายการ...
+            </p>
+          )}
         </div>
       )}
 

@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { analyzeReceiptImage, TransactionData } from "@/lib/ai-api";
+import { apiPost } from "@/app/api";
 
 export default function ReceiptUpload() {
   const { data: session } = useSession();
@@ -11,6 +12,8 @@ export default function ReceiptUpload() {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<TransactionData[]>([]);
   const [error, setError] = useState<string>("");
+  const [saving, setSaving] = useState(false);
+  const [savedSuccess, setSavedSuccess] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,8 +58,46 @@ export default function ReceiptUpload() {
     setPreview("");
     setResults([]);
     setError("");
+    setSavedSuccess(false);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
+    }
+  };
+
+  const handleSaveAll = async () => {
+    if (results.length === 0 || !session?.user?.id) {
+      setError("ไม่มีรายการที่จะบันทึก");
+      return;
+    }
+
+    setSaving(true);
+    setError("");
+
+    try {
+      // บันทึกแต่ละรายการ
+      for (const transaction of results) {
+        const response = await apiPost("/transactions", {
+          amount: transaction.amount,
+          type: transaction.type,
+          detail: transaction.detail,
+          tag: transaction.tag,
+          user_id: session.user.id,
+        });
+
+        if (!response?.success) {
+          throw new Error("Failed to save transaction");
+        }
+      }
+
+      setSavedSuccess(true);
+      setTimeout(() => {
+        handleReset();
+      }, 2000);
+    } catch (err) {
+      console.error("Save error:", err);
+      setError("ไม่สามารถบันทึกรายการได้ กรุณาลองใหม่อีกครั้ง");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -210,24 +251,49 @@ export default function ReceiptUpload() {
                 </span>
               </div>
             </div>
-            <button className="w-full mt-4 px-4 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition">
-              💾 บันทึกรายการทั้งหมด
+            <button 
+              onClick={handleSaveAll}
+              disabled={saving || savedSuccess}
+              className="w-full mt-4 px-4 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
+            >
+              {saving ? (
+                <span className="flex items-center justify-center">
+                  <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      fill="none"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  กำลังบันทึก...
+                </span>
+              ) : savedSuccess ? (
+                "✅ บันทึกสำเร็จ!"
+              ) : (
+                "💾 บันทึกรายการทั้งหมด"
+              )}
             </button>
           </div>
         </div>
       )}
 
-      {/* Info */}
-      {!results.length && !loading && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h4 className="font-semibold text-gray-800 mb-2">💡 เคล็ดลับ</h4>
-          <ul className="text-sm text-gray-600 space-y-1">
-            <li>• ถ่ายรูปให้ชัดเจน มีแสงเพียงพอ</li>
-            <li>• ให้เห็นยอดรวมและรายการสินค้าชัดเจน</li>
-            <li>• AI จะอ่านและจัดหมวดหมู่ให้อัตโนมัติ</li>
-          </ul>
+      {/* Success Message */}
+      {savedSuccess && (
+        <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <p className="text-green-600 text-center">✅ บันทึกรายการทั้งหมดเรียบร้อยแล้ว!</p>
         </div>
       )}
+
+   
     </div>
   );
 }
