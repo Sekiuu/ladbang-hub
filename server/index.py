@@ -12,11 +12,11 @@ from pathlib import Path
 server_path = Path(__file__).parent.parent / "server"
 sys.path.insert(0, str(server_path))
 
-from server.db.main import connect_to_db
+from db.main import connect_to_db
 from dotenv import load_dotenv
 
 # Import routers
-from server.routers import ai_router, user_router, transaction_router, usersetting_router
+from routers import ai_router, user_router, transaction_router, usersetting_router
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -28,6 +28,8 @@ app = FastAPI()
 load_dotenv()
 
 frontend_env = os.getenv("FRONTEND_URL")
+logger.info(f"FRONTEND_URL: {frontend_env}")
+
 if frontend_env:
     _stripped = frontend_env.strip("[").strip("]")
     origins = [
@@ -67,7 +69,7 @@ def configure_routers(app: FastAPI):
 configure_routers(app)
 
 # @app.get("/")
-@app.get("/api")
+@app.get("/")
 def read_root():
     return {"message": "FastAPI is running on Vercel", "status": "ok"}
 
