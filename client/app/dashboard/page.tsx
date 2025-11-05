@@ -82,6 +82,8 @@ export default function Dashboard() {
                 <div className="flex items-center gap-4 mt-2">
                   <p className="text-slate-500 text-sm">Overview</p>
                   <select
+                    name="view"
+                    title="Perspective"
                     value={view}
                     onChange={(e) =>
                       setView(e.target.value as "default" | "graph")
