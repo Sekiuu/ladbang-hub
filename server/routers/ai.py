@@ -4,10 +4,9 @@ import os
 from fastapi import APIRouter, HTTPException, File, UploadFile, Form
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from db.models import Transactions, UsersSetting
+from db.models import Transactions, User
 import json
 import logging
-import base64
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -87,15 +86,14 @@ async def ai_analyze(user_id: str):
     """
     Analyzes text data and returns response from AI.
     """
-    transactions = await Transactions.all().filter(user_id=user_id).values(
-        "amount",
-        "type",
-        "detail",
-        "tag",
-        "created_at")
+    transactions = (
+        await Transactions.all()
+        .filter(user_id=user_id)
+        .values("amount", "type", "detail", "tag", "created_at")
+    )
 
-    user = await UsersSetting.get(user_id=user_id)
-
+    user = await User.get(id=user_id)
+    logger.info(f"Successfully retrieved user {user_id}")
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -103,9 +101,16 @@ async def ai_analyze(user_id: str):
         raise HTTPException(status_code=500, detail="AI service not configured")
 
     if not transactions:
-        raise HTTPException(status_code=404, detail="No transactions found for analysis")
+        raise HTTPException(
+            status_code=404, detail="No transactions found for analysis"
+        )
 
-    prompt = "\n".join([f"{[t['amount']]}, {t['type']}, {t['detail']}, {t['tag']}, {t['created_at']}" for t in transactions])
+    prompt = "\n".join(
+        [
+            f"{[t['amount']]}, {t['type']}, {t['detail']}, {t['tag']}, {t['created_at']}"
+            for t in transactions
+        ]
+    )
 
     try:
         response = client.models.generate_content(
@@ -127,7 +132,9 @@ async def ai_analyze(user_id: str):
 
     except Exception as e:
         logger.error(f"Error during AI text analysis: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"AI text analysis failed: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"AI text analysis failed: {str(e)}"
+        )
 
 
 @ai_router.get("/")
@@ -181,10 +188,7 @@ async def ai_prompt(request: PromptRequest):
 
 
 @ai_router.post("/analyze-receipt")
-async def analyze_receipt(
-    image: UploadFile = File(...),
-    user_id: str = Form(...)
-):
+async def analyze_receipt(image: UploadFile = File(...), user_id: str = Form(...)):
     """
     Upload receipt image and extract transaction data using AI
     """
@@ -194,21 +198,22 @@ async def analyze_receipt(
     try:
         # Read image file
         image_bytes = await image.read()
-        
+
         # Convert to base64 for Gemini API
         image_data = [
             types.Part.from_bytes(
-                data=image_bytes,
-                mime_type=image.content_type or "image/jpeg"
+                data=image_bytes, mime_type=image.content_type or "image/jpeg"
             )
         ]
-        
+
         # Analyze using AI
         transactions = await analyze_transaction_from_image(image_data, user_id)
-        
+
         logger.info(f"Successfully analyzed receipt for user {user_id}")
         return transactions
-        
+
     except Exception as e:
         logger.error(f"Error analyzing receipt: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Receipt analysis failed: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Receipt analysis failed: {str(e)}"
+        )
