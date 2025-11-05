@@ -17,7 +17,6 @@ export async function apiGet(
       params,
     });
     const data = response.data;
-    console.log(data);
     return data;
   } catch (error) {
     console.error(error);
@@ -38,7 +37,6 @@ export async function apiPost(
       payload
     );
     const data = response.data;
-    console.log(data);
     return data;
   } catch (error) {
     console.error(error);
