@@ -15,14 +15,19 @@
   ],
   "routes": [
     {
-      "src": "/server/(.*)",
+      "src": "api/server/(.*)",
       "dest": "server/index.py"
+    },
+    {
+      "src": "api/(.*)",
+      "dest": "client/$1"
     },
     {
       "src": "/(.*)",
       "dest": "client/$1"
     }
   ],
+
   "env": {
     "PYTHON_VERSION": "3.11"
   }
