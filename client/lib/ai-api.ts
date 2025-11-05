@@ -1,6 +1,9 @@
 // AI API wrapper functions for Next.js client
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  process.env.NEXT_PUBLIC_BACKEND_URL ||
+  "http://localhost:8000";
 
 export interface PromptRequest {
   prompt: string;
@@ -22,7 +25,11 @@ export interface TransactionData {
 /**
  * Test AI service connection
  */
-export async function testAIService(): Promise<{ message: string; body: string; success: boolean }> {
+export async function testAIService(): Promise<{
+  message: string;
+  body: string;
+  success: boolean;
+}> {
   const response = await fetch(`${API_BASE_URL}/ai/`);
   if (!response.ok) {
     throw new Error(`AI service test failed: ${response.statusText}`);
@@ -55,27 +62,33 @@ export async function sendPromptToAI(prompt: string): Promise<string> {
  */
 export async function analyzeUserTransactions(userId: string): Promise<string> {
   try {
-    const response = await fetch(`${API_BASE_URL}/ai/analyze-transaction?user_id=${userId}`);
-    
+    const response = await fetch(
+      `${API_BASE_URL}/ai/analyze-transaction?user_id=${userId}`
+    );
+
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Analysis error:', errorText);
-      throw new Error(`Transaction analysis failed: ${response.statusText} - ${errorText}`);
+      console.error("Analysis error:", errorText);
+      throw new Error(
+        `Transaction analysis failed: ${response.statusText} - ${errorText}`
+      );
     }
 
     return response.text();
   } catch (error) {
-    console.error('Error analyzing transactions:', error);
+    console.error("Error analyzing transactions:", error);
     throw error;
   }
 }
 
 export async function analyzeReceiptImage(
-  imageFile: File,
+  imageFiles: File[],
   userId: string
 ): Promise<TransactionData[]> {
   const formData = new FormData();
-  formData.append("image", imageFile);
+  for (const imageFile of imageFiles) {
+    formData.append("image", imageFile);
+  }
   formData.append("user_id", userId);
 
   // Note: This endpoint needs to be implemented in FastAPI backend

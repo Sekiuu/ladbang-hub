@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 type ButtonVariant = "primary" | "secondary" | "ghost" | "link" | "danger";
@@ -7,6 +8,7 @@ export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
   size?: ButtonSize;
   isLoading?: boolean;
+  href?: string;
 };
 
 function cn(...classes: Array<string | false | null | undefined>): string {
@@ -51,6 +53,7 @@ const ButtonUI = React.forwardRef<HTMLButtonElement, ButtonProps>(
       className,
       variant = "primary",
       size = "md",
+      href,
       isLoading = false,
       disabled,
       children,
@@ -61,7 +64,21 @@ const ButtonUI = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const isDisabled = disabled || isLoading;
     const baseClasses =
       "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.99] select-none";
-
+    if (href) {
+      return (
+        <Link
+          href={href}
+          className={cn(
+            baseClasses,
+            getVariantClasses(variant),
+            getSizeClasses(size),
+            className
+          )}
+        >
+          {children}
+        </Link>
+      );
+    }
     return (
       <button
         ref={ref}
@@ -85,5 +102,3 @@ const ButtonUI = React.forwardRef<HTMLButtonElement, ButtonProps>(
 ButtonUI.displayName = "Button";
 
 export default ButtonUI;
-
-
