@@ -10,17 +10,13 @@ export default function Navbar(): React.ReactElement {
   const { data: session } = useSession();
 
   return (
-    <header
-      className="border-b shadow-sm bg-white flex items-center justify-center fixed w-full z-20"
-    >
+    <header className="border-b shadow-sm bg-white flex items-center justify-center fixed w-full z-20">
       <div className="w-[94vw]">
         <div className="w-full flex h-16 items-center px-2 sm:px-4 lg:px-6">
-
           <div className="flex-1 flex items-center justify-start">
             <Link
               href="/landing"
               className="text-lg font-semibold text-gray-800"
-
             >
               Ladbang
             </Link>
@@ -32,7 +28,7 @@ export default function Navbar(): React.ReactElement {
                 href="/profile"
                 className="text-lg font-semibold text-gray-800"
               >
-                   {session?.user?.username}
+                {session?.user?.username}
               </Link>
             )}
 
