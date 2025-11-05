@@ -24,10 +24,12 @@ export default function NavbarWrapper({
     return <>{children}</>;
 
   return (
-    <>
+    <div className="w-full">
       <Navbar />
-      <VerticalNavbar />
-      <div className="pt-16">{children}</div>
-    </>
+      <div className="flex w-full">
+        <VerticalNavbar />
+        <div className="pt-16 w-full">{children}</div>
+      </div>
+    </div>
   );
 }
