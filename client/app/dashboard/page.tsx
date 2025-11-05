@@ -5,8 +5,26 @@ import { useSession } from "next-auth/react";
 import { api } from "../api";
 import ButtonUI from "../components/ui/Button";
 import { UserBase } from "@/lib/schema/users";
-import { sendPromptToAI, analyzeReceiptImage, analyzeUserTransactions } from "@/lib/ai-api";
-import { Upload, X, MessageCircle, TrendingUp, TrendingDown, History, Send, Sparkles, Image, Edit3, CheckCircle, Plus, BarChart3 } from "lucide-react";
+import {
+  sendPromptToAI,
+  analyzeReceiptImage,
+  analyzeUserTransactions,
+} from "@/lib/ai-api";
+import {
+  Upload,
+  X,
+  MessageCircle,
+  TrendingUp,
+  TrendingDown,
+  History,
+  Send,
+  Sparkles,
+  Image,
+  Edit3,
+  CheckCircle,
+  Plus,
+  BarChart3,
+} from "lucide-react";
 import { BsRobot } from "react-icons/bs";
 import { MdOutlineUploadFile } from "react-icons/md";
 import ReactMarkdown from "react-markdown";
@@ -29,11 +47,12 @@ interface Message {
 
 export default function Dashboard() {
   const { data: session } = useSession();
-  
+
   // Add Record states
   const [amount, setAmount] = useState("");
   const [detail, setDetail] = useState("");
   const [type, setType] = useState<"income" | "expense">("income");
+  const [tag, setTag] = useState("");
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -61,7 +80,7 @@ export default function Dashboard() {
     if ((session?.user as UserBase)?.id) {
       loadTransactions();
     }
-  }, [session]);
+  }, [session?.user?.id]);
 
   // Calculate balance
   useEffect(() => {
@@ -109,8 +128,11 @@ export default function Dashboard() {
     setError(null);
 
     try {
-      const results = await analyzeReceiptImage(file, (session.user as UserBase).id);
-      
+      const results = await analyzeReceiptImage(
+        file,
+        (session.user as UserBase).id
+      );
+
       if (results && results.length > 0) {
         // บันทึกแต่ละรายการ
         for (const transaction of results) {
@@ -129,9 +151,8 @@ export default function Dashboard() {
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
         }
-        
+
         await loadTransactions();
- 
       }
     } catch (err) {
       console.error("Image analysis error:", err);
@@ -152,7 +173,7 @@ export default function Dashboard() {
         amount: parseFloat(amount),
         detail: detail || "",
         type: type,
-        tag: "",
+        tag: tag || "",
       };
       const response = await api.post("/transactions", transaction);
 
@@ -160,6 +181,7 @@ export default function Dashboard() {
         setAmount("");
         setDetail("");
         setType("income");
+        setTag("");
         await loadTransactions();
       } else {
         setError(response?.message || "เกิดข้อผิดพลาดในการบันทึกข้อมูล");
@@ -196,13 +218,18 @@ export default function Dashboard() {
 
     try {
       let contextPrompt = userMessage.content;
-      
+
       if (transactions.length > 0) {
         const transactionSummary = transactions
           .slice(0, 20)
-          .map(t => `- ${t.detail}: ${t.amount} บาท (${t.type === 'income' ? 'รายรับ' : 'รายจ่าย'})`)
-          .join('\n');
-        
+          .map(
+            (t) =>
+              `- ${t.detail}: ${t.amount} บาท (${
+                t.type === "income" ? "รายรับ" : "รายจ่าย"
+              })`
+          )
+          .join("\n");
+
         contextPrompt = `ข้อมูลประวัติรายรับรายจ่ายของฉัน:\n${transactionSummary}\n\nคำถาม: ${userMessage.content}\n\nกรุณาให้คำแนะนำโดยอ้างอิงจากข้อมูลประวัติการใช้จ่ายของฉันด้วย`;
       }
 
@@ -240,8 +267,8 @@ export default function Dashboard() {
       const result = await analyzeUserTransactions(session.user.id);
       // Clean up the response - remove \n artifacts and normalize line breaks
       const cleanedResult = result
-        .replace(/\\n/g, '\n')  // Convert literal \n to actual newlines
-        .replace(/\n{3,}/g, '\n\n')  // Remove excessive newlines
+        .replace(/\\n/g, "\n") // Convert literal \n to actual newlines
+        .replace(/\n{3,}/g, "\n\n") // Remove excessive newlines
         .trim();
       setAnalysis(cleanedResult);
     } catch (err) {
@@ -310,7 +337,9 @@ export default function Dashboard() {
                   <h2 className="text-xl font-light">AI Assistant</h2>
                 </div>
                 <p className="text-sm opacity-90 font-light mt-1">
-                  {transactions.length > 0 ? `${transactions.length} transactions loaded` : 'Ask anything'}
+                  {transactions.length > 0
+                    ? `${transactions.length} transactions loaded`
+                    : "Ask anything"}
                 </p>
               </div>
 
@@ -345,7 +374,9 @@ export default function Dashboard() {
                   messages.map((msg, idx) => (
                     <div
                       key={idx}
-                      className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                      className={`flex ${
+                        msg.role === "user" ? "justify-end" : "justify-start"
+                      }`}
                     >
                       <div
                         className={`max-w-[80%] p-4 rounded-2xl ${
@@ -355,34 +386,60 @@ export default function Dashboard() {
                         }`}
                       >
                         {msg.role === "user" ? (
-                          <p className="whitespace-pre-wrap font-light">{msg.content}</p>
+                          <p className="whitespace-pre-wrap font-light">
+                            {msg.content}
+                          </p>
                         ) : (
                           <div className="prose prose-sm prose-slate max-w-none">
                             <ReactMarkdown
                               components={{
                                 h2: ({ node, ...props }) => (
-                                  <h2 className="text-base font-semibold text-slate-800 mt-3 mb-2" {...props} />
+                                  <h2
+                                    className="text-base font-semibold text-slate-800 mt-3 mb-2"
+                                    {...props}
+                                  />
                                 ),
                                 h3: ({ node, ...props }) => (
-                                  <h3 className="text-sm font-medium text-slate-700 mt-2 mb-1" {...props} />
+                                  <h3
+                                    className="text-sm font-medium text-slate-700 mt-2 mb-1"
+                                    {...props}
+                                  />
                                 ),
                                 ul: ({ node, ...props }) => (
-                                  <ul className="list-disc list-inside space-y-1 my-2" {...props} />
+                                  <ul
+                                    className="list-disc list-inside space-y-1 my-2"
+                                    {...props}
+                                  />
                                 ),
                                 ol: ({ node, ...props }) => (
-                                  <ol className="list-decimal list-inside space-y-1 my-2" {...props} />
+                                  <ol
+                                    className="list-decimal list-inside space-y-1 my-2"
+                                    {...props}
+                                  />
                                 ),
                                 li: ({ node, ...props }) => (
-                                  <li className="text-slate-700 font-light text-sm" {...props} />
+                                  <li
+                                    className="text-slate-700 font-light text-sm"
+                                    {...props}
+                                  />
                                 ),
                                 p: ({ node, ...props }) => (
-                                  <p className="text-slate-700 font-light text-sm my-1" {...props} />
+                                  <p
+                                    className="text-slate-700 font-light text-sm my-1"
+                                    {...props}
+                                  />
                                 ),
                                 strong: ({ node, ...props }) => (
-                                  <strong className="font-semibold text-slate-800" {...props} />
+                                  <strong
+                                    className="font-semibold text-slate-800"
+                                    {...props}
+                                  />
                                 ),
                                 code: ({ node, ...props }) => (
-                                  <code className="bg-sky-100 text-sky-800 px-1.5 py-0.5 rounded text-xs font-mono" {...props} />
+                                  <code
+                                    className="bg-sky-100 text-sky-800 px-1.5 py-0.5 rounded text-xs font-mono"
+                                    {...props}
+                                  />
                                 ),
                               }}
                             >
@@ -414,7 +471,10 @@ export default function Dashboard() {
               </div>
 
               {/* AI Input */}
-              <form onSubmit={handleAISubmit} className="p-4 border-t border-sky-100 bg-white">
+              <form
+                onSubmit={handleAISubmit}
+                className="p-4 border-t border-sky-100 bg-white"
+              >
                 <div className="flex gap-3">
                   <input
                     type="text"
@@ -461,21 +521,32 @@ export default function Dashboard() {
               {transactions.length > 0 && (
                 <div className="grid grid-cols-3 gap-4 mb-6">
                   <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
-                    <p className="text-xs text-slate-500 font-medium uppercase tracking-wide mb-1">Income</p>
+                    <p className="text-xs text-slate-500 font-medium uppercase tracking-wide mb-1">
+                      Income
+                    </p>
                     <p className="text-2xl font-light text-emerald-600">
                       +฿{summary.income.toLocaleString()}
                     </p>
                   </div>
                   <div className="bg-rose-50 border border-rose-200 rounded-xl p-4">
-                    <p className="text-xs text-slate-500 font-medium uppercase tracking-wide mb-1">Expense</p>
+                    <p className="text-xs text-slate-500 font-medium uppercase tracking-wide mb-1">
+                      Expense
+                    </p>
                     <p className="text-2xl font-light text-rose-600">
                       -฿{summary.expense.toLocaleString()}
                     </p>
                   </div>
                   <div className="bg-sky-50 border border-sky-200 rounded-xl p-4">
-                    <p className="text-xs text-slate-500 font-medium uppercase tracking-wide mb-1">Net</p>
-                    <p className={`text-2xl font-light ${summary.balance >= 0 ? 'text-sky-600' : 'text-rose-600'}`}>
-                      {summary.balance >= 0 ? '+' : ''}฿{summary.balance.toLocaleString()}
+                    <p className="text-xs text-slate-500 font-medium uppercase tracking-wide mb-1">
+                      Net
+                    </p>
+                    <p
+                      className={`text-2xl font-light ${
+                        summary.balance >= 0 ? "text-sky-600" : "text-rose-600"
+                      }`}
+                    >
+                      {summary.balance >= 0 ? "+" : ""}฿
+                      {summary.balance.toLocaleString()}
                     </p>
                   </div>
                 </div>
@@ -485,7 +556,11 @@ export default function Dashboard() {
               <div className="mb-6">
                 <button
                   onClick={handleAnalyze}
-                  disabled={analysisLoading || !session?.user?.id || transactions.length === 0}
+                  disabled={
+                    analysisLoading ||
+                    !session?.user?.id ||
+                    transactions.length === 0
+                  }
                   className="w-full px-6 py-3 bg-gradient-to-r from-emerald-500 to-sky-500 text-white font-light rounded-xl hover:from-emerald-600 hover:to-sky-600 disabled:from-slate-200 disabled:to-slate-300 disabled:cursor-not-allowed transition shadow-sm flex items-center justify-center gap-2"
                 >
                   {analysisLoading ? (
@@ -529,28 +604,52 @@ export default function Dashboard() {
                     <ReactMarkdown
                       components={{
                         h2: ({ node, ...props }) => (
-                          <h2 className="text-lg font-semibold text-slate-800 mt-4 mb-2 flex items-center gap-2" {...props} />
+                          <h2
+                            className="text-lg font-semibold text-slate-800 mt-4 mb-2 flex items-center gap-2"
+                            {...props}
+                          />
                         ),
                         h3: ({ node, ...props }) => (
-                          <h3 className="text-base font-medium text-slate-700 mt-3 mb-2" {...props} />
+                          <h3
+                            className="text-base font-medium text-slate-700 mt-3 mb-2"
+                            {...props}
+                          />
                         ),
                         ul: ({ node, ...props }) => (
-                          <ul className="list-disc list-inside space-y-1 my-2" {...props} />
+                          <ul
+                            className="list-disc list-inside space-y-1 my-2"
+                            {...props}
+                          />
                         ),
                         ol: ({ node, ...props }) => (
-                          <ol className="list-decimal list-inside space-y-1 my-2" {...props} />
+                          <ol
+                            className="list-decimal list-inside space-y-1 my-2"
+                            {...props}
+                          />
                         ),
                         li: ({ node, ...props }) => (
-                          <li className="text-slate-700 font-light" {...props} />
+                          <li
+                            className="text-slate-700 font-light"
+                            {...props}
+                          />
                         ),
                         p: ({ node, ...props }) => (
-                          <p className="text-slate-700 font-light my-2" {...props} />
+                          <p
+                            className="text-slate-700 font-light my-2"
+                            {...props}
+                          />
                         ),
                         strong: ({ node, ...props }) => (
-                          <strong className="font-semibold text-slate-800" {...props} />
+                          <strong
+                            className="font-semibold text-slate-800"
+                            {...props}
+                          />
                         ),
                         code: ({ node, ...props }) => (
-                          <code className="bg-sky-100 text-sky-800 px-1.5 py-0.5 rounded text-sm font-mono" {...props} />
+                          <code
+                            className="bg-sky-100 text-sky-800 px-1.5 py-0.5 rounded text-sm font-mono"
+                            {...props}
+                          />
                         ),
                       }}
                     >
@@ -565,31 +664,37 @@ export default function Dashboard() {
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-sky-100 shadow-sm p-6">
               <div className="flex items-center gap-2 mb-6">
                 <History className="w-5 h-5 text-slate-700" />
-                <h2 className="text-xl font-light text-slate-700">
-                  History
-                </h2>
+                <h2 className="text-xl font-light text-slate-700">History</h2>
               </div>
               <div className="space-y-3 max-h-96 overflow-y-auto">
-                {transactions.slice().reverse().map((t) => (
-                  <div
-                    key={t.id}
-                    className="flex items-center justify-between p-4 border border-sky-100 rounded-xl hover:bg-sky-50/50 transition"
-                  >
-                    <div>
-                      <p className="text-sm text-slate-500 font-light">
-                        {t.type === "income" ? "รายรับ" : "รายจ่าย"}
-                      </p>
-                      <p className="font-light text-slate-700 mt-1">{t.detail}</p>
-                    </div>
-                    <p
-                      className={`text-lg font-light ${
-                        t.type === "income" ? "text-emerald-500" : "text-rose-500"
-                      }`}
+                {transactions
+                  .slice()
+                  .reverse()
+                  .map((t) => (
+                    <div
+                      key={t.id}
+                      className="flex items-center justify-between p-4 border border-sky-100 rounded-xl hover:bg-sky-50/50 transition"
                     >
-                      {t.type === "income" ? "+" : "-"}฿{t.amount.toLocaleString()}
-                    </p>
-                  </div>
-                ))}
+                      <div>
+                        <p className="text-sm text-slate-500 font-light">
+                          {t.type === "income" ? "รายรับ" : "รายจ่าย"}
+                        </p>
+                        <p className="font-light text-slate-700 mt-1">
+                          {t.detail}
+                        </p>
+                      </div>
+                      <p
+                        className={`text-lg font-light ${
+                          t.type === "income"
+                            ? "text-emerald-500"
+                            : "text-rose-500"
+                        }`}
+                      >
+                        {t.type === "income" ? "+" : "-"}฿
+                        {t.amount.toLocaleString()}
+                      </p>
+                    </div>
+                  ))}
                 {transactions.length === 0 && (
                   <p className="text-center text-slate-400 py-12 font-light">
                     ยังไม่มีประวัติธุรกรรม
@@ -698,7 +803,19 @@ export default function Dashboard() {
                       placeholder="0.00"
                     />
                   </div>
-
+                  <div>
+                    <label className="block text-sm font-light text-slate-600 mb-3">
+                      Tag
+                    </label>
+                    <input
+                      // required={false}
+                      type="text"
+                      value={tag}
+                      onChange={(e) => setTag(e.target.value)}
+                      className="w-full px-4 py-3 border border-sky-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-transparent text-slate-700 font-light"
+                      placeholder="What's this catagorised as?"
+                    />
+                  </div>
                   <div>
                     <label className="block text-sm font-light text-slate-600 mb-3">
                       Description
@@ -707,12 +824,10 @@ export default function Dashboard() {
                       type="text"
                       value={detail}
                       onChange={(e) => setDetail(e.target.value)}
-                      required
                       className="w-full px-4 py-3 border border-sky-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-transparent text-slate-700 font-light"
                       placeholder="What's this for?"
                     />
                   </div>
-
                   <button
                     type="submit"
                     disabled={isLoading}
@@ -751,7 +866,9 @@ export default function Dashboard() {
                             >
                               <X size={18} />
                             </button>
-                            <p className="text-sm text-slate-600 mt-3 font-light">{file?.name}</p>
+                            <p className="text-sm text-slate-600 mt-3 font-light">
+                              {file?.name}
+                            </p>
                           </div>
                         ) : (
                           <div>
