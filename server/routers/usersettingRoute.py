@@ -35,17 +35,30 @@ async def create_financial_settings(financial_data: UserSettingBase):
 @usersetting_router.get("/{user_id}")
 async def get_financial_settings(user_id: str):
     try:
-        record = await UsersSetting.get(user_id=user_id)
+        record = await UsersSetting.all().filter(user_id=user_id).first()
         if not record:
-            raise HTTPException(status_code=404, detail="Financial settings not found")
-
+            return {
+                "message": "Financial settings not found",
+                "body": HTTPException(
+                    status_code=404, detail="Financial settings not found"
+                ),
+                "success": False,
+            }
         logger.info(f"Successfully retrieved financial settings for user {user_id}")
-        return record
+        return {
+            "message": "Financial settings retrieved successfully",
+            "body": record,
+            "success": True,
+        }
     except Exception as e:
         logger.error(
             f"Error retrieving financial settings for user {user_id}: {str(e)}"
         )
-        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+        raise {
+            "message": "Financial settings not found",
+            "body": HTTPException(status_code=500, detail=f"Database error: {str(e)}"),
+            "success": False,
+        }
 
 
 @usersetting_router.put("/{user_id}")

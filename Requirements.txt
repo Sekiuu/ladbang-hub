@@ -9,3 +9,4 @@ asyncpg;
 tortoise-orm;
 Pillow;
 python-multipart;
+fastapi-cors

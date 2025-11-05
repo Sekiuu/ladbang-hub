@@ -196,26 +196,30 @@ export default function Home() {
           </h2>
 
           <div className="space-y-4">
-            {transactions.slice().reverse().map((t) => (
-              <div
-                key={t.id}
-                className="flex items-center justify-between p-4 border rounded-lg"
-              >
-                <div>
-                  <p className="text-sm text-gray-700">
-                    {t.type === "income" ? "รายรับ" : "รายจ่าย"}
-                  </p>
-                  <p className="font-medium text-gray-500">{t.detail}</p>
-                </div>
-                <p
-                  className={`text-lg font-bold ${
-                    t.type === "income" ? "text-green-500" : "text-red-500"
-                  }`}
+            {transactions
+              .slice()
+              .reverse()
+              .map((t) => (
+                <div
+                  key={t.id}
+                  className="flex items-center justify-between p-4 border rounded-lg"
                 >
-                  {t.type === "income" ? "+" : "-"}฿{t.amount.toLocaleString()}
-                </p>
-              </div>
-            ))}
+                  <div>
+                    <p className="text-sm text-gray-700">
+                      {t.type === "income" ? "รายรับ" : "รายจ่าย"}
+                    </p>
+                    <p className="font-medium text-gray-500">{t.detail}</p>
+                  </div>
+                  <p
+                    className={`text-lg font-bold ${
+                      t.type === "income" ? "text-green-500" : "text-red-500"
+                    }`}
+                  >
+                    {t.type === "income" ? "+" : "-"}฿
+                    {t.amount.toLocaleString()}
+                  </p>
+                </div>
+              ))}
 
             {transactions.length === 0 && (
               <p className="text-center text-gray-500">
