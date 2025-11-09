@@ -1,13 +1,11 @@
-fastApi
+fastapi
 pydantic
 starlette
 typing-extensions
-uvicorn
-dotenv
+python-dotenv
 google-genai
 asyncpg
 tortoise-orm
 pillow
 python-multipart
 fastapi-cors
-mangum

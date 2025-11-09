@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import logging
-from mangum import Mangum
 import traceback
 
 from db.main import connect_to_db
@@ -15,7 +14,7 @@ from routers import ai_router, user_router, transaction_router, usersetting_rout
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI()
+app = FastAPI(root_path="/api")
 STARTUP_ERROR = None
 
 # CORS configuration
@@ -57,10 +56,10 @@ except Exception:
 # Configure routers
 def configure_routers(app: FastAPI):
     """Include routers with proper prefixes and tags."""
-    app.include_router(user_router, prefix="/api/users", tags=["Users"])
-    app.include_router(transaction_router, prefix="/api/transactions", tags=["Transactions"])
-    app.include_router(usersetting_router, prefix="/api/usersettings", tags=["User Settings"])
-    app.include_router(ai_router, prefix="/api/ai", tags=["AI"])
+    app.include_router(user_router, prefix="/users", tags=["Users"])
+    app.include_router(transaction_router, prefix="/transactions", tags=["Transactions"])
+    app.include_router(usersetting_router, prefix="/usersettings", tags=["User Settings"])
+    app.include_router(ai_router, prefix="/ai", tags=["AI"])
     
     logger.info(
         f"routes configured : \n" + "\n".join([f"   {i}" for i in app.routes])
@@ -78,9 +77,6 @@ def read_root():
         }
     return {"message": "FastAPI is running on Vercel", "status": "ok"}
 
-@app.get("/api/health")
+@app.get("/health")
 def health_check():
     return {"status": "healthy", "version": "1.0.0"}
-
-# Mangum handler for Vercel serverless
-handler = Mangum(app, lifespan="off")
