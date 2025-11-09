@@ -14,7 +14,7 @@ from routers import ai_router, user_router, transaction_router, usersetting_rout
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI(root_path="/api")
+app = FastAPI()
 STARTUP_ERROR = None
 
 # CORS configuration
