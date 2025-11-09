@@ -5,7 +5,8 @@
       "src": "server/index.py",
       "use": "@vercel/python",
       "config": {
-        "maxLambdaSize": "15mb"
+        "maxLambdaSize": "15mb",
+        "python": "3.11"
       }
     },
     {
@@ -29,6 +30,6 @@
   ],
 
   "env": {
-    "PYTHON_VERSION": "3.11"
+    "PYTHONPATH": "server"
   }
 }

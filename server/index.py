@@ -3,14 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 import logging
 from mangum import Mangum
-
-# Set up paths to import from server directory
-import sys
-from pathlib import Path
-
-# Add server directory to Python path
-server_path = Path(__file__).parent.parent / "server"
-sys.path.insert(0, str(server_path))
+import traceback
 
 from db.main import connect_to_db
 from dotenv import load_dotenv
@@ -23,6 +16,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
+STARTUP_ERROR = None
 
 # CORS configuration
 load_dotenv()
@@ -52,7 +46,13 @@ app.add_middleware(
 )
 
 # db connect
-connect_to_db(app=app)
+try:
+    logger.info("Attempting to connect to the database during startup...")
+    connect_to_db(app=app)
+    logger.info("Database connection wrapper passed startup.")
+except Exception:
+    STARTUP_ERROR = traceback.format_exc()
+    logger.error(f"Captured startup error: {STARTUP_ERROR}")
 
 # Configure routers
 def configure_routers(app: FastAPI):
@@ -71,6 +71,11 @@ configure_routers(app)
 # @app.get("/")
 @app.get("/")
 def read_root():
+    if STARTUP_ERROR:
+        return {
+            "status": "APPLICATION_STARTUP_ERROR",
+            "error_details": STARTUP_ERROR,
+        }
     return {"message": "FastAPI is running on Vercel", "status": "ok"}
 
 @app.get("/api/health")
