@@ -3,33 +3,24 @@
   "builds": [
     {
       "src": "server/index.py",
-      "use": "@vercel/python",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "client/next.config.ts",
+      "use": "@vercel/next",
       "config": {
-        "maxLambdaSize": "15mb",
-        "python": "3.11"
+        "distDir": ".next"
       }
-    },
-    {
-      "src": "client/package.json",
-      "use": "@vercel/next"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "server/(.*)",
-      "dest": "server/index.py"
+      "source": "/server/(.*)",
+      "destination": "/server/index.py"
     },
     {
-      "src": "api/(.*)",
-      "dest": "client/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "client/$1"
+      "source": "/(.*)",
+      "destination": "/client/$1"
     }
-  ],
-
-  "env": {
-    "PYTHONPATH": "server"
-  }
+  ]
 }
