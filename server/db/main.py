@@ -101,18 +101,5 @@ def connect_to_db(app: FastAPI):
             logger.error(f"Failed to register Tortoise ORM: {e}")
             return
     else:
-        logger.error("DB_URL environment variable is not set!")
-        logger.warning("Using fallback SQLite database for testing")
-        DB_URL = "sqlite://db.sqlite3"
-        try:
-            register_tortoise(
-                app=app,
-                db_url=DB_URL,
-                modules={"models": ["db.models"]},
-                generate_schemas=True,
-                add_exception_handlers=True,
-            )
-            logger.info("SQLite database connection successful")
-        except Exception as e:
-            logger.error(f"Failed to register Tortoise ORM with SQLite: {e}")
-            return
+        logger.error("DB_URL is not set in environment variables.")
+        return
