@@ -20,7 +20,7 @@
     },
     {
       "src": "api/(.*)",
-      "dest": "client/api/$1"
+      "dest": "client/$1"
     },
     {
       "src": "/(.*)",
