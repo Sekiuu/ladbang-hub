@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import logging
@@ -76,6 +76,10 @@ def read_root():
             "error_details": STARTUP_ERROR,
         }
     return {"message": "FastAPI is running on Vercel", "status": "ok"}
+
+@app.head("/")
+def root_head():
+    return Response(status_code=200)
 
 @app.get("/health")
 def health_check():
