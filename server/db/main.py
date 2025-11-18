@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
-def connect_to_db(app = app):
+def connect_to_db(app: FastAPI):
     # dotenv.load_dotenv()
     DB_URL = os.getenv("DB_URL")
 
