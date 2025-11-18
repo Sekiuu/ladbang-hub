@@ -1,9 +1,9 @@
 from fastapi import HTTPException, APIRouter
-from db.models import User
+from server.db.models import User
 from pydantic import BaseModel
 import logging
 
-from schemes import UserBase, UserCreate
+from server.schemes import UserBase, UserCreate
 
 
 class VerifyCredentials(BaseModel):

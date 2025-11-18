@@ -1,7 +1,7 @@
 from fastapi import HTTPException, APIRouter, File, UploadFile
-from db.models import Transactions
+from server.db.models import Transactions
 from typing import List
-from schemes import TransactionBase
+from server.schemes import TransactionBase
 
 # from pydantic import BaseModel
 import logging
@@ -10,7 +10,7 @@ import PIL.Image
 
 # import datetime
 
-from routers.ai import analyze_transaction_from_image
+from server.routers.ai import analyze_transaction_from_image
 
 # Configure logging
 logger = logging.getLogger(__name__)

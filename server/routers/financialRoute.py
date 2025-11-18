@@ -1,6 +1,6 @@
 from fastapi import HTTPException, APIRouter
-from db.models import Financial
-from schemes import FinancialBase
+from server.db.models import Financial
+from server.schemes import FinancialBase
 
 import logging
 
