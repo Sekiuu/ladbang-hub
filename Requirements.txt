@@ -9,4 +9,3 @@ tortoise-orm
 pillow
 python-multipart
 fastapi-cors
-uvicorn[standard]
