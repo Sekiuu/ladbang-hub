@@ -1,18 +1,5 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "server/index.py",
-      "use": "@vercel/python",
-      "config": {
-        "python": "3.11"
-      }
-    },
-    {
-      "src": "client/package.json",
-      "use": "@vercel/next"
-    }
-  ],
   "routes": [
     {
       "src": "server/(.*)",
