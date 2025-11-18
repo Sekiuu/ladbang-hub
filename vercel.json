@@ -1,21 +1,3 @@
 {
-  "version": 2,
-  "routes": [
-    {
-      "src": "server/(.*)",
-      "dest": "server/index.py"
-    },
-    {
-      "src": "api/(.*)",
-      "dest": "client/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "client/$1"
-    }
-  ],
-
-  "env": {
-    "PYTHONPATH": "server"
-  }
+  "version": 2
 }
