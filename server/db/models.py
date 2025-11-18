@@ -17,7 +17,7 @@ class User(Model):
 class Transactions(Model):
     id = fields.UUIDField(pk=True)
     user_id = fields.CharField(max_length=255, description="owner")
-    amout = fields.FloatField(description="amount")
+    amount = fields.FloatField(description="amount")
     type = fields.CharField(max_length=255, description="type of record")
     detail = fields.CharField(max_length=10**4, description="detail")
     tag = fields.CharField(max_length=255, description="tag")

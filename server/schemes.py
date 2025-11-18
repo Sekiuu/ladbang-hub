@@ -19,7 +19,7 @@ class UserCreate(BaseModel):
 class TransactionBase(BaseModel):
     id: str
     user_id: str
-    amout: float
+    amount: float
     type: str
     detail: str
     tag: str  # income, expense

@@ -42,7 +42,7 @@ async def analyze_transaction_from_image(image_data: list, user_id: str):
     prompt = f"""
     Analyze the attached image(s) of a receipt. Extract the following details
     and return them as Array/List of JSON object:
-    - "amout": The total amount of the transaction as a float, defaulting to 0.
+    - "amount": The total amount of the transaction as a float, defaulting to 0.
     - "type": The type of transaction, which should be "expense".
     - "detail": A brief description of the items or service.
     - "tag": A relevant category for the expense (e.g., "food", "transportation", "groceries").

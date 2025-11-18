@@ -53,7 +53,7 @@ async def update_record(record_id: str, record_data: TransactionBase):
 
         await record.update_or_create(
             user_id=record_data.user_id,
-            amout=record_data.amout,
+            amount=record_data.amount,
             type=record_data.type,
             detail=record_data.detail,
             tag=record_data.tag,
