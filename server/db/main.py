@@ -8,7 +8,6 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = FastAPI()
 
 def connect_to_db(app: FastAPI):
     # dotenv.load_dotenv()
