@@ -4,11 +4,11 @@ import os
 import logging
 import traceback
 
-from db.main import connect_to_db
+from server.db.main import connect_to_db
 from dotenv import load_dotenv
 
 # Import routers
-from routers import ai_router, user_router, transaction_router, usersetting_router
+from server.routers import ai_router, user_router, transaction_router, usersetting_router
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
