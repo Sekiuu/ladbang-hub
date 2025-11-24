@@ -4,7 +4,7 @@ import os
 from fastapi import APIRouter, HTTPException, File, UploadFile, Form
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from db.models import Transactions, User
+from server.db.models import Transactions, User
 import json
 import logging
 

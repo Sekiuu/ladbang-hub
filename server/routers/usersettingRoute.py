@@ -1,6 +1,6 @@
 from fastapi import HTTPException, APIRouter
-from db.models import UsersSetting
-from schemes import UserSettingBase
+from server.db.models import UsersSetting
+from server.schemes import UserSettingBase
 
 import logging
 

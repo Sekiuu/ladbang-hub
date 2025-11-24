@@ -1,14 +1,14 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import logging
 import traceback
 
-from db.main import connect_to_db
+from server.db.main import connect_to_db
 from dotenv import load_dotenv
 
 # Import routers
-from routers import ai_router, user_router, transaction_router, usersetting_router
+from server.routers import ai_router, user_router, transaction_router, usersetting_router
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -76,6 +76,10 @@ def read_root():
             "error_details": STARTUP_ERROR,
         }
     return {"message": "FastAPI is running on Vercel", "status": "ok"}
+
+@app.head("/")
+def root_head():
+    return Response(status_code=200)
 
 @app.get("/health")
 def health_check():

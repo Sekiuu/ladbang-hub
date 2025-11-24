@@ -70,7 +70,7 @@ def connect_to_db(app: FastAPI):
         register_tortoise(
             app=app,
             db_url=tortoise_db_url,
-            modules={"models": ["db.models"]},
+            modules={"models": ["server.db.models"]},
             generate_schemas=True,
             add_exception_handlers=True,
         )
