@@ -13,9 +13,6 @@ from routers import ai_router, user_router, transaction_router, usersetting_rout
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-items = []
-
-
 app = FastAPI()
 
 

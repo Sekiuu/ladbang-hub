@@ -71,7 +71,13 @@ async def create_user(user_data: UserCreate):
         )
 
         logger.info(f"Successfully created user {user.username}")
-        return user
+        
+        response_user = UserBase(id=str(user.id), username=user.username, email=user.email, password="") # Don't send password back
+        return {
+            "body": response_user.dict(),
+            "message": "User created successfully",
+            "success": True,
+        }
     except HTTPException:
         raise
     except Exception as e:

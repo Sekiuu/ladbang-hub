@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import ButtonUI from "../components/ui/Button";
 import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
-import { api } from "../api";
+import { api, ResponseData } from "../api";
 
 export default function Page() {
   return (
@@ -34,26 +34,38 @@ function SignInForm() {
     setIsLoading(true);
     setError(null);
     try {
-      await api.post("/users", {
+      const response = await api.post("/users", {
         username: name,
         email: email,
         password: password,
       });
-      // frontend-only scaffold: save the email so Login can prefill.
-      // Real signup should call your backend API here.
-      try {
-        localStorage.setItem("savedEmail", email);
-      } catch (e) {
-        // ignore storage errors in non-browser environments
-      }
-      // If user came from Google OAuth, send them to home; otherwise to login
-      if (from === "google") {
-        router.push("/");
+      
+      if (response.success) {
+        // frontend-only scaffold: save the email so Login can prefill.
+        // Real signup should call your backend API here.
+        try {
+          localStorage.setItem("savedEmail", email);
+        } catch (e) {
+          // ignore storage errors in non-browser environments
+        }
+        // If user came from Google OAuth, send them to home; otherwise to login
+        if (from === "google") {
+          router.push("/");
+        } else {
+          router.push("/login");
+        }
       } else {
-        router.push("/login");
+        setError(response.message || "An error occurred during registration.");
       }
     } catch (err) {
-      setError("เกิดข้อผิดพลาดขณะสมัครสมาชิก");
+      if (err) {
+        const detail = (err as any)?.detail;
+        setError(detail || "An error occurred during registration.");
+      } else if ((err as ResponseData)?.message) {
+        setError((err as ResponseData).message);
+      } else {
+        setError("An unknown error occurred during registration.");
+      }
     } finally {
       setIsLoading(false);
     }

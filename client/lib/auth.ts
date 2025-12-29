@@ -23,15 +23,18 @@ export const authOptions: NextAuthOptions = {
             email: credentials.email,
             password: credentials.password,
           });
-          if (response?.success) {
+
+          if (response && response.success) {
             const user = response.body as UserBase;
             return user;
           }
-        } catch (error) {
-          console.error("Auth error:", error);
-        }
 
-        return null;
+          throw new Error(response?.message || "Invalid credentials.");
+
+        } catch (error) {
+          // re-throw the error to show it on the login page
+          throw error;
+        }
       },
     }),
     GoogleProvider({

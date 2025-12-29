@@ -27,7 +27,7 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        setError(`ERR:${result.error}`);
+        setError(result.error);
       } else {
         router.push("/");
       }

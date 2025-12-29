@@ -29,21 +29,16 @@ export async function apiGet(
 export async function apiPost(
   path: string,
   payload?: unknown
-): Promise<ResponseData | null> {
-  try {
-    // Ensure path ends with / to avoid redirects
-    const normalizedPath = path.endsWith("/") ? path : path + "/";
-    const response = await axios.post<ResponseData>(
-      backendUrl + normalizedPath,
-      payload
-    );
-    const data = response.data;
-    console.log(data);
-    return data;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
+): Promise<ResponseData> {
+  // Ensure path ends with / to avoid redirects
+  const normalizedPath = path.endsWith("/") ? path : path + "/";
+  const response = await axios.post<ResponseData>(
+    backendUrl + normalizedPath,
+    payload
+  );
+  const data = response.data;
+  console.log(data);
+  return data;
 }
 
 // Convenient object-style usage: apiClient.get(...) / apiClient.post(...)
